@@ -173,7 +173,7 @@
     <json-drawer ref="jsonDrawer" size="60%" @refresh="refreshJson" />
     <code-type-modal ref="codeTypeModal" @confirm="generate" />
     <input id="copyNode" type="hidden" />
-    <a-modal :title="tFn('base.save')" :visible="showSave" >
+    <a-modal :title="tFn('base.save')" :visible="showSave" @cancel="showSave=false" >
       <a-form
         ref="elForm"
         :model="savaFormData"
@@ -182,24 +182,24 @@
         :wrapperCol="{span:24}"
         label-width="100px"
       >
-        <a-form-item :label="tFn('base.form.name')" prop="name" v-bind="validateInfos.name">
+        <a-form-item :label="tFn('base.form.name')" v-bind="validateInfos.name">
           <a-input
-            v-model="savaFormData.name"
+            v-model:value="savaFormData.name"
             :placeholder="tFn('base.enter')"
             allow-clear
             @blur="validate('name', { trigger: 'blur' }).catch(() => {})"
           />
         </a-form-item>
-        <a-form-item :label="tFn('base.remark')" prop="remark" v-bind="validateInfos.remark">
+        <a-form-item :label="tFn('base.remark')" v-bind="validateInfos.remark">
           <a-textarea
-            v-model="savaFormData.remark"
+          v-model:value="savaFormData.remark"
             :placeholder="tFn('base.enter')"
           />
         </a-form-item>
-        <a-form-item :label="tFn('base.status')" prop="status" >
-          <a-radio-group v-model:value="status" button-style="solid">
-            <a-radio-button value="1">开启</a-radio-button>
-            <a-radio-button value="0">关闭</a-radio-button>
+        <a-form-item :label="tFn('base.status')" >
+          <a-radio-group v-model:value="savaFormData.status" button-style="solid">
+            <a-radio-button value="0">开启</a-radio-button>
+            <a-radio-button value="1">关闭</a-radio-button>
           </a-radio-group>
         </a-form-item>
         
@@ -314,7 +314,7 @@ export default defineComponent({
     const savaFormData = reactive({
       name: "",
       remark: "",
-      status: 0,
+      status: '0',
     });
     const rulesRef = reactive({
       name: [
@@ -633,16 +633,18 @@ export default defineComponent({
     }
 
     function handelConfirm() {
+      debugger
       validate()
         .then(() => {
-    
+          debugger
           const from = {
             conf: JSON.stringify(formConf), // 表单配置
-            fields: drawingList, // 表单项的数组
-            ...this.savaFormData, // 表单名等
+            fields: drawingList.map(item=>JSON.stringify(item)), // 表单项的数组
+            ...savaFormData, // 表单名等
           };
           emit("save", from);
           resetFields();
+          showSave.value = false;
         })
         .catch((err) => {
           console.log("error", err);

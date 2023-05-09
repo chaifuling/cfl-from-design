@@ -1,6 +1,6 @@
 {
   "name": "cfl-from-design",
-  "version": "0.1.6",
+  "version": "0.1.9",
   "description": "基于vue3+andt-vue 3.0 的表单设计系统",
   "main": "./lib/from-design.umd.min.js",
   "keyword": "vFrom-Design from-design vFromDesignr",
