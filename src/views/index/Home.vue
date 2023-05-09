@@ -6,10 +6,9 @@
       theme="light"
       :style="{ overflow: 'auto', height: '100vh', position: 'fixed' }"
     >
-      <!-- <div class="left-header">
-        <img src="@/assets/logo.png" alt="logo" />
-        <h3>JDGT</h3>
-      </div> -->
+      <div class="left-header" v-if="title">
+        <h3>{{ title }}</h3>
+      </div>
       <div class="left-main">
         <div v-for="(item, listIndex) in leftComponents" :key="listIndex">
           <a-divider orientation="left">
@@ -43,7 +42,7 @@
                   <img
                     :src="allIcon[element.__config__.tagIcon]"
                     class="components-body-img"
-                    style="margin-right: 4px;"
+                    style="margin-right: 4px"
                   />
                   {{ tFn(element.__config__.label) }}
                 </div>
@@ -174,6 +173,46 @@
     <json-drawer ref="jsonDrawer" size="60%" @refresh="refreshJson" />
     <code-type-modal ref="codeTypeModal" @confirm="generate" />
     <input id="copyNode" type="hidden" />
+    <a-modal :title="tFn('base.save')" :visible="showSave" >
+      <a-form
+        ref="elForm"
+        :model="savaFormData"
+        size="medium"
+        :labelCol="{span:4}"
+        :wrapperCol="{span:24}"
+        label-width="100px"
+      >
+        <a-form-item :label="tFn('base.form.name')" prop="name" v-bind="validateInfos.name">
+          <a-input
+            v-model="savaFormData.name"
+            :placeholder="tFn('base.enter')"
+            allow-clear
+            @blur="validate('name', { trigger: 'blur' }).catch(() => {})"
+          />
+        </a-form-item>
+        <a-form-item :label="tFn('base.remark')" prop="remark" v-bind="validateInfos.remark">
+          <a-textarea
+            v-model="savaFormData.remark"
+            :placeholder="tFn('base.enter')"
+          />
+        </a-form-item>
+        <a-form-item :label="tFn('base.status')" prop="status" >
+          <a-radio-group v-model:value="status" button-style="solid">
+            <a-radio-button value="1">开启</a-radio-button>
+            <a-radio-button value="0">关闭</a-radio-button>
+          </a-radio-group>
+        </a-form-item>
+        
+      </a-form>
+      <template #footer>
+        <a-button @click="showSave = false">
+          {{ tFn('base.cancel') }}
+        </a-button>
+        <a-button type="primary" @click="handelConfirm">
+          {{ tFn('base.ok') }}
+        </a-button>
+      </template>
+    </a-modal>
   </a-layout>
 </template>
 <script>
@@ -227,6 +266,7 @@ import { tFn } from "@/hook/useI18n";
 import { baseMixin } from "@/store/app-mixin";
 import { notification } from "ant-design-vue";
 import axios from "axios";
+import { Form } from "ant-design-vue";
 import {
   PlayCircleOutlined,
   EyeOutlined,
@@ -235,10 +275,12 @@ import {
   DeleteOutlined,
   InsertRowBelowOutlined,
   ControlOutlined,
-  SaveOutlined
+  SaveOutlined,
 } from "@ant-design/icons-vue";
 let beautifier;
 let tempActiveData;
+const useForm = Form.useForm;
+
 export default defineComponent({
   name: "fromDesign",
   components: {
@@ -257,19 +299,38 @@ export default defineComponent({
     DeleteOutlined,
     InsertRowBelowOutlined,
     ControlOutlined,
-    SaveOutlined
+    SaveOutlined,
   },
-  emits:['save'],
+  emits: ["save"],
   mixins: [baseMixin],
   props: {
     fromConfig: Object,
+    title: String,
   },
-  setup(props,{emit}) {
-    console.log("====================================");
-    console.log(props);
-    console.log("====================================");
+  setup(props, { emit }) {
     const instance = getCurrentInstance();
+    const showSave = ref(false);
     let collapsed = reactive(false);
+    const savaFormData = reactive({
+      name: "",
+      remark: "",
+      status: 0,
+    });
+    const rulesRef = reactive({
+      name: [
+        {
+          required: true,
+          message: tFn("base.enter"),
+        },
+      ],
+      remark: [
+        {
+          required: true,
+          message: tFn("base.enter"),
+        },
+      ],
+    });
+    const { resetFields, validate,validateInfos } = useForm(savaFormData, rulesRef);
     let operationType = ref("");
     let drawingList = reactive(drawingDefalut);
     let drawingData = reactive({});
@@ -566,8 +627,26 @@ export default defineComponent({
       });
     }
 
-    function save(){
-      emit('save',drawingList);
+    function save() {
+      resetFields();
+      showSave.value = true;
+    }
+
+    function handelConfirm() {
+      validate()
+        .then(() => {
+    
+          const from = {
+            conf: JSON.stringify(formConf), // 表单配置
+            fields: drawingList, // 表单项的数组
+            ...this.savaFormData, // 表单名等
+          };
+          emit("save", from);
+          resetFields();
+        })
+        .catch((err) => {
+          console.log("error", err);
+        });
     }
 
     function drawingItemCopy(item, list) {
@@ -703,6 +782,13 @@ export default defineComponent({
       codeTypeModal,
       jsonDrawer,
       tFn,
+      save,
+      showSave,
+      savaFormData,
+      title: props.title,
+      validateInfos,
+      validate,
+      handelConfirm
     };
   },
 });
