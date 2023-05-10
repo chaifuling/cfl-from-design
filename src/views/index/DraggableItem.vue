@@ -230,11 +230,11 @@ export default defineComponent({
     const showIcon = ref(props.showIcon);
     const formConf = reactive({...props.formConf});
     const activeId = ref(props.activeId);
-    debugger
+    
     watch(
       props,
       (newVal) => {
-        debugger
+        
         index.value = newVal.index;
         showIcon.value = newVal.showIcon;
         activeId.value = newVal.activeId;

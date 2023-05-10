@@ -125,6 +125,7 @@
                     @activeItem="activeFormItem"
                     @copyItem="drawingItemCopy"
                     @deleteItem="drawingItemDelete"
+                    @fromChange="formChange"
                   />
                 </template>
               </draggable>
@@ -316,7 +317,7 @@ export default defineComponent({
     ControlOutlined,
     SaveOutlined,
   },
-  emits: ["save"],
+  emits: ["save","change"],
   mixins: [baseMixin],
   props: {
     formConfig: {
@@ -496,6 +497,11 @@ export default defineComponent({
       },
       { deep: true }
     );
+
+    function formChange(index,list){
+        drawingList[index] = list;
+        emit('change',drawingList);
+    };
 
     // 在页面挂载后执行以下操作
     onMounted(() => {
@@ -704,13 +710,13 @@ export default defineComponent({
     function drawingItemCopy(item, list) {
       let clone = deepClone(item);
       clone = createIdAndKey(clone);
-      list.push(clone);
+      drawingList.push(clone);
       activeFormItem(clone);
     }
 
     // 删除表单单项
     function drawingItemDelete(index, list) {
-      list.splice(index, 1);
+      drawingList.splice(index, 1);
       nextTick(() => {
         const len = drawingList.length;
         if (len) {
@@ -854,6 +860,7 @@ export default defineComponent({
       validate,
       handelConfirm,
       handleColse,
+      formChange
     };
   },
 });
