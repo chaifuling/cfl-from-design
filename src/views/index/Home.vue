@@ -173,16 +173,20 @@
     <json-drawer ref="jsonDrawer" size="60%" @refresh="refreshJson" />
     <code-type-modal ref="codeTypeModal" @confirm="generate" />
     <input id="copyNode" type="hidden" />
-    <a-modal :title="tFn('base.save')" :visible="showSave" @cancel="handleColse" >
+    <a-modal
+      :title="tFn('base.save')"
+      :visible="showSave"
+      @cancel="handleColse"
+    >
       <a-form
         ref="elForm"
         :model="savaFormData"
         size="medium"
-        :labelCol="{span:4}"
-        :wrapperCol="{span:24}"
+        :labelCol="{ span: 4 }"
+        :wrapperCol="{ span: 24 }"
         label-width="100px"
       >
-        <a-form-item :label="tFn('base.form.name')" v-bind="validateInfos.name">
+        <a-form-item :label="tFn('base.form.name')" props="name" v-bind="validateInfos.name">
           <a-input
             v-model:value="savaFormData.name"
             :placeholder="tFn('base.enter')"
@@ -190,26 +194,28 @@
             @blur="validate('name', { trigger: 'blur' }).catch(() => {})"
           />
         </a-form-item>
-        <a-form-item :label="tFn('base.remark')" v-bind="validateInfos.remark">
+        <a-form-item :label="tFn('base.remark')" props="remark" v-bind="validateInfos.remark">
           <a-textarea
-          v-model:value="savaFormData.remark"
+            v-model:value="savaFormData.remark"
             :placeholder="tFn('base.enter')"
           />
         </a-form-item>
-        <a-form-item :label="tFn('base.status')" >
-          <a-radio-group v-model:value="savaFormData.status" button-style="solid">
+        <a-form-item :label="tFn('base.status')" props="status">
+          <a-radio-group
+            v-model:value="savaFormData.status"
+            button-style="solid"
+          >
             <a-radio-button value="0">开启</a-radio-button>
             <a-radio-button value="1">关闭</a-radio-button>
           </a-radio-group>
         </a-form-item>
-        
       </a-form>
       <template #footer>
         <a-button @click="handleColse">
-          {{ tFn('base.cancel') }}
+          {{ tFn("base.cancel") }}
         </a-button>
         <a-button type="primary" @click="handelConfirm">
-          {{ tFn('base.ok') }}
+          {{ tFn("base.ok") }}
         </a-button>
       </template>
     </a-modal>
@@ -304,67 +310,80 @@ export default defineComponent({
   emits: ["save"],
   mixins: [baseMixin],
   props: {
-    fromConfig: Object,
+    fromConfig: {
+      type:Object,
+      default:{}
+    },
     title: String,
   },
   setup(props, { emit }) {
-    const instance = getCurrentInstance();
-    const showSave = ref(false);
-    let collapsed = reactive(false);
+    const instance = getCurrentInstance(); // 获取当前实例
+    const showSave = ref(false); // 定义一个showSave变量，并将其初始化为false（使用Vue响应式引用）
+    let collapsed = reactive(false); // 定义一个collapsed变量，并将其初始化为false（使用Vue响应式对象）
     const savaFormData = reactive({
-      name:props.name|| "",
-      remark:props.remark|| "",
-      status:props.status|| '0',
+      // 定义一个savaFormData对象（使用Vue响应式对象）
+      name: props.fromConfig.name || "", // 设置name属性值为props中传入的name，如果不存在则为空字符串
+      remark: props.fromConfig.remark || "", // 设置remark属性值为props中传入的remark，如果不存在则为空字符串
+      status: props.fromConfig.status || "0", // 设置status属性值为props中传入的status，如果不存在则为'0'
     });
     const rulesRef = reactive({
+      // 定义一个rulesRef对象（使用Vue响应式对象）
       name: [
+        // 定义name属性为数组
         {
-          required: true,
-          message: tFn("base.enter"),
+          required: true, // 设置为必填项
+          message: tFn("base.enter"), // 提示信息为'请输入'
         },
       ],
       remark: [
+        // 定义remark属性为数组
         {
-          required: true,
-          message: tFn("base.enter"),
+          required: true, // 设置为必填项
+          message: tFn("base.enter"), // 提示信息为'请输入'
         },
       ],
     });
-    const { resetFields, validate,validateInfos } = useForm(savaFormData, rulesRef);
-    let operationType = ref("");
-    let drawingList = reactive(props.drawingList||drawingDefalut);
-    let drawingData = reactive({});
-    let formDrawer = ref(null);
-    let jsonDrawer = ref(null);
-    let codeTypeModal = ref(null);
-    let formData = reactive({});
-    let activeData = reactive({});
-    let oldActiveId = ref(null);
-    let drawingItems = ref(null);
-    let idGlobal = ref(100);
-    let generateConf = reactive({});
-    let formConf = reactive(props.formConf||{});
-    let activeId = ref(drawingDefalut[0].formId);
+    const { resetFields, validate, validateInfos } = useForm(
+      savaFormData,
+      rulesRef
+    ); // 使用Vue3的form表单验证机制，定义resetFields、validate、validateInfos三个函数
+    let operationType = ref(""); // 定义一个operationType变量，并将其初始化为空字符串（使用Vue响应式引用）
+    let drawingList = reactive(props.fromConfig.drawingList || drawingDefalut); // 定义一个drawingList变量，通过传入的props中的drawingList对象初始化，如果不存在则使用默认的drawingDefalut对象
+    let drawingData = reactive({}); // 定义一个drawingData对象（使用Vue响应式对象）
+    let formDrawer = ref(null); // 定义一个formDrawer变量，并将其初始化为null（使用Vue响应式引用）
+    let jsonDrawer = ref(null); // 定义一个jsonDrawer变量，并将其初始化为null（使用Vue响应式引用）
+    let codeTypeModal = ref(null); // 定义一个codeTypeModal变量，并将其初始化为null（使用Vue响应式引用）
+    let formData = reactive({}); // 定义一个formData对象（使用Vue响应式对象）
+    let activeData = reactive({}); // 定义一个activeData对象（使用Vue响应式对象）
+    let oldActiveId = ref(null); // 定义一个oldActiveId变量，并将其初始化为null（使用Vue响应式引用）
+    let drawingItems = ref(null); // 定义一个drawingItems变量，并将其初始化为null（使用Vue响应式引用）
+    let idGlobal = ref(100); // 定义一个idGlobal变量，并将其初始化为100（使用Vue响应式引用）
+    let generateConf = reactive({}); // 定义一个generateConf对象（使用Vue响应式对象）
+    let formConf = reactive(props.fromConfig.formConf || {}); // 定义一个formConf变量，通过传入的props中的formConf对象初始化，如果不存在则为空对象（使用Vue响应式对象）
+    let activeId = ref(drawingDefalut[0].formId); // 定义一个activeId变量，并将其初始化为drawingDefalut[0].formId的值（使用Vue响应式引用）
     let leftComponents = [
+      // 定义一个leftComponents数组
       {
-        title: "base.input_components",
-        list: inputComponents,
+        title: "base.input_components", // 设置title属性值为'输入组件'
+        list: inputComponents, // 设置list属性值为inputComponents数组对象
       },
       {
-        title: "base.optional_components",
-        list: selectComponents,
+        title: "base.optional_components", // 设置title属性值为'可选组件'
+        list: selectComponents, // 设置list属性值为selectComponents数组对象
       },
       {
-        title: "base.layout_components",
-        list: layoutComponents,
+        title: "base.layout_components", // 设置title属性值为'布局组件'
+        list: layoutComponents, // 设置list属性值为layoutComponents数组对象
       },
     ];
 
+    // 定义一个activeFormItem函数，用于激活当前表单项
     function activeFormItem(currentItem) {
       activeData.value = currentItem;
       activeId.value = currentItem.__config__.formId;
     }
 
+    // 定义一个generateCode函数，用于生成代码
     function generateCode() {
       const { type } = generateConf.value;
       AssembleFormData();
@@ -374,6 +393,7 @@ export default defineComponent({
       return beautifier.html(html + script + css, beautifierConf.html);
     }
 
+    // 定义一个copyNode箭头函数，用于复制节点代码
     const copyNode = () => {
       const codeStr = generateCode();
       if (!codeStr) {
@@ -421,7 +441,7 @@ export default defineComponent({
         //   activeData.placeholder.replace(oldVal, '') + val;
       }
     );
-
+    // 监听activeData.__config__.label的变化
     watch(
       "activeId",
       (val) => {
@@ -429,7 +449,7 @@ export default defineComponent({
       },
       { immediate: true }
     );
-
+    // 监听activeId的变化
     watch(
       "drawingList",
       (val) => {
@@ -441,6 +461,7 @@ export default defineComponent({
       { deep: true }
     );
 
+    // 在页面挂载后执行以下操作
     onMounted(() => {
       const clipboard = new ClipboardJS("#copyNode", {
         text: (trigger) => {
@@ -468,6 +489,7 @@ export default defineComponent({
       });
     });
 
+    // 递归设置对象属性值的函数
     function setObjectValueReduce(obj, strKeys, data) {
       const arr = strKeys.split(".");
       arr.reduce((pre, item, i) => {
@@ -480,6 +502,7 @@ export default defineComponent({
       }, obj);
     }
 
+    // 设置响应数据的函数
     function setRespData(component, resp) {
       const { dataPath, renderKey, dataConsumer } = component.__config__;
       if (!dataPath || !dataConsumer) return;
@@ -496,6 +519,7 @@ export default defineComponent({
       }
     }
 
+    // 获取响应数据的函数
     function fetchData(component) {
       const { dataType, method, url } = component.__config__;
 
@@ -511,6 +535,7 @@ export default defineComponent({
       }
     }
 
+    // 设置表单项的 loading 状态的函数
     function setLoading(component, val) {
       const { directives } = component;
       if (Array.isArray(directives)) {
@@ -519,6 +544,7 @@ export default defineComponent({
       }
     }
 
+    // 拖拽表单项结束时执行的函数
     function onEnd(obj) {
       if (obj.from !== obj.to) {
         fetchData(tempActiveData);
@@ -527,6 +553,7 @@ export default defineComponent({
       }
     }
 
+    // 添加表单项的函数
     function addComponent(item) {
       const clone = cloneComponent(item);
       fetchData(clone);
@@ -534,6 +561,7 @@ export default defineComponent({
       activeFormItem(clone);
     }
 
+    // 克隆表单项的函数
     function cloneComponent(origin) {
       const clone = deepClone(origin);
       if (clone.__config__) {
@@ -568,7 +596,7 @@ export default defineComponent({
       tempActiveData = clone;
       return tempActiveData;
     }
-
+    // 为表单项设置唯一 ID 和 renderKey 的函数
     function createIdAndKey(item) {
       const config = item.__config__;
       idGlobal.value = idGlobal.value + 1;
@@ -588,35 +616,35 @@ export default defineComponent({
       }
       return item;
     }
-
+    // 组装表单数据的函数
     function AssembleFormData() {
       formData = {
         fields: deepClone(drawingList),
         ...formConf,
       };
     }
-
+    // 生成代码的函数
     function generate(data) {
       const func = instance.proxy[`exec${titleCase(operationType.value)}`];
       generateConf.value = data;
       func && func(data);
     }
-
+    // 运行表单
     function execRun(data) {
       AssembleFormData();
       formDrawer.value.onOpen(formData, generateConf.value);
     }
-
+    // 下载vue文件
     function execDownload(data) {
       const codeStr = generateCode();
       const blob = new Blob([codeStr], { type: "text/plain;charset=utf-8" });
       saveAs(blob, data.fileName);
     }
-
+    // 复制vue代码
     function execCopy(data) {
       document.getElementById("copyNode").click();
     }
-
+    // 清空
     function empty() {
       $confirm({
         title: tFn("base.confirm.empty.components"),
@@ -626,17 +654,17 @@ export default defineComponent({
         },
       });
     }
-
+    // 打开保存
     function save() {
       showSave.value = true;
     }
-
+    // 保存
     function handelConfirm() {
       validate()
         .then(() => {
           const from = {
             conf: JSON.stringify(formConf), // 表单配置
-            fields: drawingList.map(item=>JSON.stringify(item)), // 表单项的数组
+            fields: drawingList.map((item) => JSON.stringify(item)), // 表单项的数组
             ...savaFormData, // 表单名等
           };
           emit("save", from);
@@ -647,7 +675,7 @@ export default defineComponent({
           console.log("error", err);
         });
     }
-
+    // 复制表单单项
     function drawingItemCopy(item, list) {
       let clone = deepClone(item);
       clone = this.createIdAndKey(clone);
@@ -655,6 +683,7 @@ export default defineComponent({
       activeFormItem(clone);
     }
 
+    // 删除表单单项
     function drawingItemDelete(index, list) {
       list.splice(index, 1);
       nextTick(() => {
@@ -665,11 +694,13 @@ export default defineComponent({
       });
     }
 
-  function handleColse(){
-    showSave.value=false;
-    resetFields()
-  }
+    // 关闭弹窗
+    function handleColse() {
+      showSave.value = false;
+      resetFields();
+    }
 
+    // 更新表单列表
     function updateDrawingList(newTag, list) {
       const index = list.findIndex(
         (item) => item.__config__.formId === activeId.value
@@ -684,26 +715,28 @@ export default defineComponent({
       }
     }
 
+    // 显示表单JSON配置
     function showJson() {
       AssembleFormData();
       jsonDrawer.value.onOpen(stringify(formData));
     }
-
+    // 下载弹窗
     function download() {
       codeTypeModal.value.onOpen(true);
       operationType.value = "download";
     }
-
+    // 运行弹窗
     function run() {
       codeTypeModal.value.onOpen(false);
       operationType.value = "run";
     }
-
+    // 复制弹窗
     function copy() {
       codeTypeModal.value.onOpen(false);
       operationType.value = "copy";
     }
 
+    // tag切换
     function tagChange(newTag) {
       newTag = cloneComponent(newTag);
       const config = newTag.__config__;
@@ -793,7 +826,7 @@ export default defineComponent({
       validateInfos,
       validate,
       handelConfirm,
-      handleColse
+      handleColse,
     };
   },
 });
