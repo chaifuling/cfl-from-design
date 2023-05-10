@@ -6,7 +6,7 @@ export default [
       changeTag: true,
       tag: 'a-input',
       tagIcon: 'inputIcon',
-      defaultValue: undefined,
+      defaultValue: '请输入',
       required: true,
       layout: 'colFormItem',
       span: 24,

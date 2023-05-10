@@ -32,7 +32,13 @@ const layouts = {
     const config = scheme.__config__
     // 穿梭框特殊处理
     if (config.tag === 'a-transfer') {
-      this.$set(scheme, 'render', item => item.title)
+      scheme.render = (item) => {
+        return createVNode(
+          "div",
+          { key: item.title, value: item.key },
+          item.title
+        );
+      };
     }
     const listeners = buildListeners.call(this, scheme)
     return (
@@ -119,13 +125,13 @@ function setValue(event, config, scheme) {
     || config.tag === 'a-radio-group') {
     value = event.target.value
   }
-  this.$set(config, 'defaultValue', value)
+  config.defaultValue=value
   // 穿梭框特殊处理
   if (config.tag === 'a-transfer') {
-    this.$set(scheme, 'target-keys', value)
+    scheme['target-keys']=value
   }
   // this.$set(config, 'defaultValue', event)
-  this.$set(this[this.formConf.formModel], scheme.__vModel__, value)
+  this.formConf.formModel[scheme.__vModel__] =value;
 }
 
 function buildListeners(scheme) {

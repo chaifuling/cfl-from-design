@@ -1,7 +1,7 @@
 <template>
   <div>
-    <a-tabs v-model="currentTab" class="right-header">
-      <a-tab-pane key="field" :tab="tFn('base.component.properties')" />
+    <a-tabs v-model:activeKey="currentTab" class="right-header" >
+      <a-tab-pane key="field" :tab="tFn('base.component.properties')"/>
       <a-tab-pane key="form" :tab="tFn('base.form.properties')" />
     </a-tabs>
     <div class="right-main">
@@ -58,6 +58,7 @@
           v-if="activeData.value.__config__.label !== undefined"
           :label="tFn('base.title')"
         >
+     
           <a-input
             v-model="activeData.value.__config__.label"
             :placeholder="`${tFn('base.enter')}${tFn('base.title')}`"
@@ -92,6 +93,7 @@
           "
           :label="tFn('base.placeholder')"
         >
+       
           <a-input
             v-model="activeData.value.placeholder"
             :placeholder="`${tFn('base.enter')}${tFn('base.placeholder')}`"
@@ -1345,7 +1347,8 @@ export default defineComponent({
     activeData: Object,
     formConf: Object,
   },
-  setup(props) {
+  emits:['tag-change'],
+  setup(props,{emit}) {
 
     const currentTab = ref("field");
     const formConf = ref({...props.formConf});

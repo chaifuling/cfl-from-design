@@ -174,7 +174,7 @@ const layouts = {
         key={config.renderKey}
         conf={currentItem}
         onInput={(event) => {
-          this.$set(config, "defaultValue", event);
+          config.defaultValue = event
         }}
       >
         {child}
