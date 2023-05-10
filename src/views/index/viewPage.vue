@@ -33,7 +33,7 @@ import DraggableItem from "./DraggableItem";
 import drawingDefalut from "@/components/generator/drawingDefalut";
 
 export default defineComponent({
-  name: "fromViewPage",
+  name: "formViewPage",
   emits: ['change'],
   props:{
     fromConfig:Object,

@@ -121,6 +121,7 @@
                     :active-id="activeId"
                     :form-conf="formConf"
                     :showIcon="true"
+                    :disabled="false"
                     @activeItem="activeFormItem"
                     @copyItem="drawingItemCopy"
                     @deleteItem="drawingItemDelete"
@@ -186,7 +187,11 @@
         :wrapperCol="{ span: 24 }"
         label-width="100px"
       >
-        <a-form-item :label="tFn('base.form.name')" props="name" v-bind="validateInfos.name">
+        <a-form-item
+          :label="tFn('base.form.name')"
+          props="name"
+          v-bind="validateInfos.name"
+        >
           <a-input
             v-model:value="savaFormData.name"
             :placeholder="tFn('base.enter')"
@@ -194,7 +199,11 @@
             @blur="validate('name', { trigger: 'blur' }).catch(() => {})"
           />
         </a-form-item>
-        <a-form-item :label="tFn('base.remark')" props="remark" v-bind="validateInfos.remark">
+        <a-form-item
+          :label="tFn('base.remark')"
+          props="remark"
+          v-bind="validateInfos.remark"
+        >
           <a-textarea
             v-model:value="savaFormData.remark"
             :placeholder="tFn('base.enter')"
@@ -288,7 +297,7 @@ let tempActiveData;
 const useForm = Form.useForm;
 
 export default defineComponent({
-  name: "fromDesign",
+  name: "formDesign",
   components: {
     draggable,
     render,
@@ -310,9 +319,16 @@ export default defineComponent({
   emits: ["save"],
   mixins: [baseMixin],
   props: {
-    fromConfig: {
-      type:Object,
-      default:{}
+    formConfig: {
+      type: Object,
+      default: {
+        id: "",
+        name: "",
+        status: "",
+        remark: "",
+        formConf: {}, // 表单配置
+        drawingList: drawingDefalut, // 表单项的数组
+      },
     },
     title: String,
   },
@@ -322,9 +338,9 @@ export default defineComponent({
     let collapsed = reactive(false); // 定义一个collapsed变量，并将其初始化为false（使用Vue响应式对象）
     const savaFormData = reactive({
       // 定义一个savaFormData对象（使用Vue响应式对象）
-      name: props.fromConfig.name || "", // 设置name属性值为props中传入的name，如果不存在则为空字符串
-      remark: props.fromConfig.remark || "", // 设置remark属性值为props中传入的remark，如果不存在则为空字符串
-      status: props.fromConfig.status || "0", // 设置status属性值为props中传入的status，如果不存在则为'0'
+      name: "", // 设置name属性值为props中传入的name，如果不存在则为空字符串
+      remark: "", // 设置remark属性值为props中传入的remark，如果不存在则为空字符串
+      status: "0", // 设置status属性值为props中传入的status，如果不存在则为'0'
     });
     const rulesRef = reactive({
       // 定义一个rulesRef对象（使用Vue响应式对象）
@@ -348,7 +364,7 @@ export default defineComponent({
       rulesRef
     ); // 使用Vue3的form表单验证机制，定义resetFields、validate、validateInfos三个函数
     let operationType = ref(""); // 定义一个operationType变量，并将其初始化为空字符串（使用Vue响应式引用）
-    let drawingList = reactive(props.fromConfig.drawingList || drawingDefalut); // 定义一个drawingList变量，通过传入的props中的drawingList对象初始化，如果不存在则使用默认的drawingDefalut对象
+    const drawingList = reactive(props.formConfig.drawingList); // 定义一个drawingList变量，通过传入的props中的drawingList对象初始化，如果不存在则使用默认的drawingDefalut对象
     let drawingData = reactive({}); // 定义一个drawingData对象（使用Vue响应式对象）
     let formDrawer = ref(null); // 定义一个formDrawer变量，并将其初始化为null（使用Vue响应式引用）
     let jsonDrawer = ref(null); // 定义一个jsonDrawer变量，并将其初始化为null（使用Vue响应式引用）
@@ -359,7 +375,7 @@ export default defineComponent({
     let drawingItems = ref(null); // 定义一个drawingItems变量，并将其初始化为null（使用Vue响应式引用）
     let idGlobal = ref(100); // 定义一个idGlobal变量，并将其初始化为100（使用Vue响应式引用）
     let generateConf = reactive({}); // 定义一个generateConf对象（使用Vue响应式对象）
-    let formConf = reactive(props.fromConfig.formConf || {}); // 定义一个formConf变量，通过传入的props中的formConf对象初始化，如果不存在则为空对象（使用Vue响应式对象）
+    let formConf = reactive(props.formConfig.formConf); // 定义一个formConf变量，通过传入的props中的formConf对象初始化，如果不存在则为空对象（使用Vue响应式对象）
     let activeId = ref(drawingDefalut[0].formId); // 定义一个activeId变量，并将其初始化为drawingDefalut[0].formId的值（使用Vue响应式引用）
     let leftComponents = [
       // 定义一个leftComponents数组
@@ -420,9 +436,13 @@ export default defineComponent({
     };
 
     if (Array.isArray(drawingItems) && drawingItems.length > 0) {
-      drawingList = reactive(drawingItems);
+      drawingItems.forEach((item, index) => {
+        drawingList.splice(index, 1, item);
+      });
     } else {
-      drawingList = reactive(drawingDefalut);
+      drawingDefalut.forEach((item, index) => {
+        drawingList.splice(index, 1, item);
+      });
     }
     activeFormItem(drawingList[0]);
 
@@ -461,6 +481,22 @@ export default defineComponent({
       { deep: true }
     );
 
+    watch(
+      () => props.formConfig,
+      (newVal, oldVal) => {
+        savaFormData.name = newVal.name;
+        savaFormData.remark = newVal.remark;
+        savaFormData.status = newVal.status;
+        newVal.drawingList.forEach((item, index) => {
+          drawingList.splice(index, 1, item);
+        });
+        Object.keys(newVal.formConf).forEach((item) => {
+          formConf[item] = newVal.formConf[item];
+        });
+      },
+      { deep: true }
+    );
+
     // 在页面挂载后执行以下操作
     onMounted(() => {
       const clipboard = new ClipboardJS("#copyNode", {
@@ -477,12 +513,6 @@ export default defineComponent({
         message.error(tFn("base.code.copy.failed"));
       });
 
-      if (Array.isArray(drawingItems) && drawingItems.length > 0) {
-        drawingList = drawingItems;
-      } else {
-        drawingList = drawingDefalut;
-      }
-      activeFormItem(drawingList[0]);
 
       loadBeautifier((btf) => {
         beautifier = btf;
@@ -511,11 +541,11 @@ export default defineComponent({
         .reduce((pre, item) => pre[item], resp);
 
       this.setObjectValueReduce(component, dataConsumer, respData);
-      const i = this.drawingList.findIndex(
+      const i = drawingList.findIndex(
         (item) => item.__config__.renderKey === renderKey
       );
       if (i > -1) {
-        this.drawingList[i] = component;
+        drawingList[i] = component;
       }
     }
 
@@ -646,13 +676,8 @@ export default defineComponent({
     }
     // 清空
     function empty() {
-      $confirm({
-        title: tFn("base.confirm.empty.components"),
-        onOk() {
-          drawingList.length = 0;
-          idGlobal.value = 100;
-        },
-      });
+      drawingList.length = 0;
+      idGlobal.value = 100;
     }
     // 打开保存
     function save() {
@@ -678,7 +703,7 @@ export default defineComponent({
     // 复制表单单项
     function drawingItemCopy(item, list) {
       let clone = deepClone(item);
-      clone = this.createIdAndKey(clone);
+      clone = createIdAndKey(clone);
       list.push(clone);
       activeFormItem(clone);
     }
@@ -762,7 +787,10 @@ export default defineComponent({
     }
 
     function refreshJson(data) {
-      drawingList = deepClone(data.fields);
+      const fields =  deepClone(data.fields);
+      fields.forEach((item, index) => {
+        drawingList.splice(index, 1, item);
+      });
       delete data.fields;
       formConf.value = data;
     }
@@ -787,7 +815,6 @@ export default defineComponent({
       copyNode,
       collapsed,
       drawingItems,
-      drawingList,
       idGlobal,
       generateConf,
       formConf,

@@ -1,5 +1,5 @@
 // 导入组件
-import FromDesign from './src/views/index/FromDesign';
+import FormDesign from './src/views/index/FormDesign';
 import ViewPage from './src/views/index/ViewPages';
 import {lang} from './src/locales/index';
 import storePlugin from "./src/store";
@@ -9,7 +9,7 @@ import { tFn } from '@/hook/useI18n';
 
 // 存储组件列表
 const components = [
-  FromDesign,
+  FormDesign,
   ViewPage
 ]
 
@@ -34,7 +34,7 @@ export default {
   // 导出的对象必须具有 install，才能被 app.use() 方法安装
   install,
   // 以下是具体的组件列表
-  FromDesign,
+  FormDesign,
   ViewPage,
   lang
 }

@@ -2,16 +2,27 @@
 import draggable from "vuedraggable";
 import render from "@/components/render/render";
 import { CopyOutlined, DeleteOutlined } from "@ant-design/icons-vue";
-import { createVNode, reactive, defineComponent } from "vue";
+import { createVNode, reactive, defineComponent, watch, ref } from "vue";
+import { tFn } from "@/hook/useI18n";
 
 const components = {
-  itemBtns(h, currentItem, index, list, showIcon, disabled) {
-    const { onCopyItem, onDeleteItem } = this.$attrs;
+  itemBtns(
+    attrs,
+    h,
+    currentItem,
+    index,
+    list,
+    showIcon,
+    disabled,
+    formConf,
+    activeId
+  ) {
+    const { onCopyItem, onDeleteItem } = attrs;
     return [
       <span
         style={{ display: showIcon ? "block" : "none" }}
         class="drawing-item-copy"
-        title={this.tFn("base.copy")}
+        title={tFn("base.copy")}
         onClick={(event) => {
           onCopyItem(currentItem, list);
           event.stopPropagation();
@@ -22,7 +33,7 @@ const components = {
       <span
         style={{ display: showIcon ? "block" : "none" }}
         class="drawing-item-delete"
-        title={this.tFn("base.remove")}
+        title={tFn("base.remove")}
         onClick={(event) => {
           onDeleteItem(index, list);
           event.stopPropagation();
@@ -34,8 +45,18 @@ const components = {
   },
 };
 const layouts = {
-  colFormItem(h, currentItem, index, list, showIcon, disabled) {
-    const { onActiveItem, onFromChange } = this.$attrs;
+  colFormItem(
+    attrs,
+    h,
+    currentItem,
+    index,
+    list,
+    showIcon,
+    disabled,
+    formConf,
+    activeId
+  ) {
+    const { onActiveItem, onFromChange } = attrs;
     currentItem = reactive(currentItem);
     const config = reactive(currentItem.__config__);
     const child = renderChildren.apply(this, arguments);
@@ -50,11 +71,10 @@ const layouts = {
       };
     }
     let className =
-      this.activeId === config.formId
+      activeId === config.formId
         ? "drawing-item active-from-item"
         : "drawing-item";
-    if (this.formConf.unFocusedComponentBorder)
-      className += " unfocus-bordered";
+    if (formConf.unFocusedComponentBorder) className += " unfocus-bordered";
     return (
       <a-col
         span={config.span}
@@ -101,8 +121,8 @@ const layouts = {
       </a-col>
     );
   },
-  rowFormItem(h, currentItem, index, list) {
-    const { onActiveItem } = this.$attrs;
+  rowFormItem(attrs, h, currentItem, index, list) {
+    const { onActiveItem } = attrs;
     const config = currentItem.__config__;
     const className =
       this.activeId === config.formId
@@ -146,7 +166,7 @@ const layouts = {
       </a-col>
     );
   },
-  raw(h, currentItem, index, list) {
+  raw(attrs, h, currentItem, index, list) {
     const config = currentItem.__config__;
     const child = renderChildren.apply(this, arguments);
     return (
@@ -163,7 +183,7 @@ const layouts = {
   },
 };
 
-function renderChildren(h, currentItem, index, list) {
+function renderChildren(attrs, h, currentItem, index, list) {
   const config = currentItem.__config__;
   if (!Array.isArray(config.children)) return null;
   return config.children.map((el, i) => {
@@ -188,30 +208,65 @@ export default defineComponent({
     render,
     draggable,
   },
-  props: [
-    "currentItem",
-    "index",
-    "drawingList",
-    "activeId",
-    "formConf",
-    "showIcon",
-    "disabled",
-  ],
-  render() {
-    const layout = layouts[this.currentItem.__config__.layout];
-    const disabled = this.disabled || false;
-    if (layout) {
-      return layout.call(
-        this,
-        createVNode,
-        this.currentItem,
-        this.index,
-        this.drawingList,
-        this.showIcon,
-        disabled
-      );
-    }
-    return layoutIsNotFound.call(this);
+  props: {
+    currentItem: Object,
+    index: Number,
+    drawingList: Array,
+    activeId: [String, Number],
+    formConf: Object,
+    showIcon: Boolean,
+    disabled: Boolean,
+  },
+
+  setup(props, { attrs }) {
+    const propsAarry = ["currentItem", "formConf"];
+    const layout = layouts[props.currentItem.__config__.layout];
+    const disabled = ref(props.disabled || false);
+    const currentItem = reactive({
+     ...props.currentItem
+    });
+    const index = ref(props.index);
+    const drawingList = reactive([...props.drawingList]);
+    const showIcon = ref(props.showIcon);
+    const formConf = reactive({...props.formConf});
+    const activeId = ref(props.activeId);
+    debugger
+    watch(
+      props,
+      (newVal) => {
+        debugger
+        index.value = newVal.index;
+        showIcon.value = newVal.showIcon;
+        activeId.value = newVal.activeId;
+        newVal.drawingList.forEach((item, index) => {
+          drawingList.splice(index, 1, item);
+        });
+        Object.keys(newVal.formConf).forEach(item=>{
+          formConf[item] = newVal.formConf[item];
+        })
+        Object.keys(newVal.currentItem).forEach(item=>{
+          currentItem[item] = newVal.currentItem[item];
+        })
+      },
+      { deep: true }
+    );
+    return () => {
+      if (layout) {
+        return layout(
+          attrs,
+          createVNode,
+          currentItem,
+          index.value,
+          drawingList,
+          showIcon.value,
+          disabled.value,
+          formConf,
+          activeId.value
+        );
+      }
+
+      return layoutIsNotFound.call(this);
+    };
   },
 });
 </script>
