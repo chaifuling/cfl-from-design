@@ -173,7 +173,7 @@
     <json-drawer ref="jsonDrawer" size="60%" @refresh="refreshJson" />
     <code-type-modal ref="codeTypeModal" @confirm="generate" />
     <input id="copyNode" type="hidden" />
-    <a-modal :title="tFn('base.save')" :visible="showSave" @cancel="showSave=false" >
+    <a-modal :title="tFn('base.save')" :visible="showSave" @cancel="handleColse" >
       <a-form
         ref="elForm"
         :model="savaFormData"
@@ -205,7 +205,7 @@
         
       </a-form>
       <template #footer>
-        <a-button @click="showSave = false">
+        <a-button @click="handleColse">
           {{ tFn('base.cancel') }}
         </a-button>
         <a-button type="primary" @click="handelConfirm">
@@ -312,9 +312,9 @@ export default defineComponent({
     const showSave = ref(false);
     let collapsed = reactive(false);
     const savaFormData = reactive({
-      name: "",
-      remark: "",
-      status: '0',
+      name:props.name|| "",
+      remark:props.remark|| "",
+      status:props.status|| '0',
     });
     const rulesRef = reactive({
       name: [
@@ -332,7 +332,7 @@ export default defineComponent({
     });
     const { resetFields, validate,validateInfos } = useForm(savaFormData, rulesRef);
     let operationType = ref("");
-    let drawingList = reactive(drawingDefalut);
+    let drawingList = reactive(props.drawingList||drawingDefalut);
     let drawingData = reactive({});
     let formDrawer = ref(null);
     let jsonDrawer = ref(null);
@@ -343,7 +343,7 @@ export default defineComponent({
     let drawingItems = ref(null);
     let idGlobal = ref(100);
     let generateConf = reactive({});
-    let formConf = reactive({});
+    let formConf = reactive(props.formConf||{});
     let activeId = ref(drawingDefalut[0].formId);
     let leftComponents = [
       {
@@ -628,15 +628,12 @@ export default defineComponent({
     }
 
     function save() {
-      resetFields();
       showSave.value = true;
     }
 
     function handelConfirm() {
-      debugger
       validate()
         .then(() => {
-          debugger
           const from = {
             conf: JSON.stringify(formConf), // 表单配置
             fields: drawingList.map(item=>JSON.stringify(item)), // 表单项的数组
@@ -667,6 +664,11 @@ export default defineComponent({
         }
       });
     }
+
+  function handleColse(){
+    showSave.value=false;
+    resetFields()
+  }
 
     function updateDrawingList(newTag, list) {
       const index = list.findIndex(
@@ -790,7 +792,8 @@ export default defineComponent({
       title: props.title,
       validateInfos,
       validate,
-      handelConfirm
+      handelConfirm,
+      handleColse
     };
   },
 });
