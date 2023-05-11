@@ -18,7 +18,6 @@
             />
           </div>
         </div>
-        {{ formConf }}
       </a-layout-content>
       <a-layout-footer :style="{ textAlign: 'center' }"> </a-layout-footer>
     </a-layout>
@@ -26,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive, ref ,watch} from "vue";
 // @ts-ignore
 import DraggableItem from "./DraggableItem";
 // @ts-ignore
@@ -72,6 +71,20 @@ export default defineComponent({
     function drawingItemDelete (){
 
     }
+
+    watch(
+      () => props.formConfig,
+      (newVal) => {
+        newVal.drawingList.forEach((item:any, index:number) => {
+          drawingList.splice(index, 1, item);
+        });
+        Object.keys(newVal.formConf).forEach((item) => {
+          // @ts-ignore
+          formConf[item] = newVal.formConf[item];
+        });
+      },
+      { deep: true }
+    );
     return {
       drawingItemDelete,
       drawingItemCopy,

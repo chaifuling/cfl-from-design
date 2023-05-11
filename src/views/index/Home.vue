@@ -389,10 +389,10 @@ export default defineComponent({
         title: "base.optional_components", // 设置title属性值为'可选组件'
         list: selectComponents, // 设置list属性值为selectComponents数组对象
       },
-      {
-        title: "base.layout_components", // 设置title属性值为'布局组件'
-        list: layoutComponents, // 设置list属性值为layoutComponents数组对象
-      },
+      // {
+      //   title: "base.layout_components", // 设置title属性值为'布局组件'
+      //   list: layoutComponents, // 设置list属性值为layoutComponents数组对象
+      // },
     ];
 
     // 定义一个activeFormItem函数，用于激活当前表单项
