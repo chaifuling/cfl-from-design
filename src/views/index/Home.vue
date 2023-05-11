@@ -262,6 +262,7 @@ import {
   titleCase,
   deepClone,
   isObjectObject,
+  setObject
 } from "@/utils/index";
 import {
   makeUpHtml,
@@ -396,7 +397,7 @@ export default defineComponent({
 
     // 定义一个activeFormItem函数，用于激活当前表单项
     function activeFormItem(currentItem) {
-      activeData.value = currentItem;
+      setObject(currentItem,activeData)
       activeId.value = currentItem.__config__.formId;
     }
 
@@ -448,13 +449,13 @@ export default defineComponent({
     activeFormItem(drawingList[0]);
 
     watch(
-      () => activeData.value.__config__.label,
+      () => activeData.__config__.label,
       (val, oldVal) => {
         if (
-          activeData.value.placeholder === undefined ||
-          !activeData.value.__config__.tag ||
-          oldActiveId.value !== activeId.value ||
-          activeData.value.__config__.tag !== "a-range-picker"
+          activeData.placeholder === undefined ||
+          !activeData.__config__.tag ||
+          oldActiveId !== activeId.value ||
+          activeData.__config__.tag !== "a-range-picker"
         ) {
           return;
         }
@@ -546,7 +547,7 @@ export default defineComponent({
         .split(".")
         .reduce((pre, item) => pre[item], resp);
 
-      this.setObjectValueReduce(component, dataConsumer, respData);
+      setObjectValueReduce(component, dataConsumer, respData);
       const i = drawingList.findIndex(
         (item) => item.__config__.renderKey === renderKey
       );
@@ -584,10 +585,12 @@ export default defineComponent({
     function onEnd(obj) {
       if (obj.from !== obj.to) {
         fetchData(tempActiveData);
-        activeData.value = tempActiveData;
+        setObject(tempActiveData ,activeData);
         activeId.value = idGlobal.value;
       }
     }
+
+    
 
     // 添加表单项的函数
     function addComponent(item) {
@@ -771,24 +774,24 @@ export default defineComponent({
     function tagChange(newTag) {
       newTag = cloneComponent(newTag);
       const config = newTag.__config__;
-      newTag.__vModel__ = activeData.value.__vModel__;
+      newTag.__vModel__ = activeData.__vModel__;
       config.formId = activeId.value;
-      config.span = activeData.value.__config__.span;
-      activeData.value.__config__.tag = config.tag;
-      activeData.value.__config__.tagIcon = config.tagIcon;
-      activeData.value.__config__.document = config.document;
+      config.span = activeData.__config__.span;
+      activeData.__config__.tag = config.tag;
+      activeData.__config__.tagIcon = config.tagIcon;
+      activeData.__config__.document = config.document;
       if (
-        typeof activeData.value.__config__.defaultValue ===
+        typeof activeData.__config__.defaultValue ===
         typeof config.defaultValue
       ) {
-        config.defaultValue = activeData.value.__config__.defaultValue;
+        config.defaultValue = activeData.__config__.defaultValue;
       }
       Object.keys(newTag).forEach((key) => {
-        if (activeData.value[key] !== undefined) {
-          newTag[key] = activeData.value[key];
+        if (activeData[key] !== undefined) {
+          newTag[key] = activeData[key];
         }
       });
-      activeData.value = newTag;
+      setObject(newTag,activeData);
       updateDrawingList(newTag, drawingList);
     }
 
@@ -824,7 +827,6 @@ export default defineComponent({
       idGlobal,
       generateConf,
       formConf,
-      activeData,
       setObjectValueReduce,
       setRespData,
       fetchData,

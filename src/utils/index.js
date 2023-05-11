@@ -22,6 +22,12 @@ export function indent(str, num, len = 2) {
   return result.join('\n')
 }
 
+export function setObject(target,obj){
+  Object.keys(target).forEach((key)=>{
+    obj[key]= target[key];
+  })
+}
+
 // 首字母大小
 export function titleCase(str) {
   return str.replace(/( |^)[a-z]/g, L => L.toUpperCase())

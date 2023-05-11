@@ -5,7 +5,7 @@
         <div
           :style="{ background: '#fff', padding: '24px', minHeight: '100vh' }"
         >
-          <div v-for="item,index in drawingList">
+          <div v-for="(item, index) in drawingList">
             <draggable-item
               :drawing-list="drawingList"
               :current-item="item"
@@ -34,27 +34,52 @@ import drawingDefalut from "@/components/generator/drawingDefalut";
 
 export default defineComponent({
   name: "formViewPage",
-  emits: ['change'],
-  props:{
-    fromConfig:Object,
-  },
+  emits: ["change"],
   components: {
     DraggableItem,
   },
+  props: {
+    formConfig: {
+      type: Object,
+      default: {
+        id: 0,
+        name: "",
+        status: "",
+        remark: "",
+        formConf: {}, // 表单配置
+        drawingList: drawingDefalut, // 表单项的数组
+      },
+    },
+  },
   setup(props, { emit }) {
     let formConf = reactive({});
-    let drawingList = reactive(props.fromConfig||drawingDefalut);
-    let activeId = ref(drawingDefalut[0].formId);
-    
-    function formChange(index:string,list:any){
-        drawingList[index] = list;
-        emit('change',drawingList);
-    };
+    let drawingList = reactive(props.formConfig.drawingList );
+    let activeId = ref(props.formConfig.id );
+
+    function formChange(index: string, list: any) {
+      drawingList[index] = list;
+      emit("change", drawingList);
+    }
+    // 定义一个activeFormItem函数，用于激活当前表单项
+    function activeFormItem(currentItem: any) {
+        console.log(currentItem);
+        
+    }
+     // 复制表单单项
+     function drawingItemCopy(item: any, list: any) {
+ 
+    }
+    function drawingItemDelete (){
+
+    }
     return {
+      drawingItemDelete,
+      drawingItemCopy,
+      activeFormItem,
       formConf,
       drawingList,
       activeId,
-      formChange
+      formChange,
     };
   },
 });
