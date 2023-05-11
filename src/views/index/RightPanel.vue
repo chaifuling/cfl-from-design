@@ -1,12 +1,14 @@
 <template>
   <div>
-    <a-tabs v-model:activeKey="currentTab" class="right-header" >
-      <a-tab-pane key="field" :tab="tFn('base.component.properties')"/>
+    <a-tabs v-model:activeKey="currentTab" class="right-header">
+      <a-tab-pane key="field" :tab="tFn('base.component.properties')" />
       <a-tab-pane key="form" :tab="tFn('base.form.properties')" />
     </a-tabs>
     <div class="right-main">
       <!-- 组件属性 -->
       <a-form
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 16 }"
         v-show="currentTab === 'field' && showField"
         size="small"
         label-width="90px"
@@ -16,7 +18,7 @@
           :label="tFn('base.component.type')"
         >
           <a-select
-            v-model="activeData.__config__.tagIcon"
+            v-model:value="activeData.__config__.tagIcon"
             :placeholder="tFn('base.choose') + tFn('base.component.type')"
             :style="{ width: '100%' }"
             @change="tagChange"
@@ -42,7 +44,7 @@
           :label="tFn('base.field.name')"
         >
           <a-input
-            v-model="activeData.__vModel__"
+            v-model:value="activeData.__vModel__"
             :placeholder="`${tFn('base.enter')}${tFn(
               'base.field.name'
             )} (v-model)`"
@@ -58,9 +60,8 @@
           v-if="activeData.__config__.label !== undefined"
           :label="tFn('base.title')"
         >
-     
           <a-input
-            v-model="activeData.__config__.label"
+            v-model:value="activeData.__config__.label"
             :placeholder="`${tFn('base.enter')}${tFn('base.title')}`"
             @input="changeRenderKey"
           />
@@ -73,13 +74,13 @@
             <a-row :gutter="8">
               <a-col :span="12">
                 <a-input
-                  v-model="activeData.titles[0]"
+                  v-model:value="activeData.titles[0]"
                   :placeholder="tFn('base.source.title')"
                 />
               </a-col>
               <a-col :span="12">
                 <a-input
-                  v-model="activeData.titles[1]"
+                  v-model:value="activeData.titles[1]"
                   :placeholder="tFn('base.target.title')"
                 />
               </a-col>
@@ -93,9 +94,8 @@
           "
           :label="tFn('base.placeholder')"
         >
-       
           <a-input
-            v-model="activeData.placeholder"
+            v-model:value="activeData.placeholder"
             :placeholder="`${tFn('base.enter')}${tFn('base.placeholder')}`"
             @input="changeRenderKey"
           />
@@ -105,7 +105,7 @@
           :label="tFn('base.start.placeholder')"
         >
           <a-input
-            v-model="activeData.__config__['start-placeholder']"
+            v-model:value="activeData.__config__['start-placeholder']"
             :placeholder="`${tFn('base.enter')}${tFn('base.placeholder')}`"
             @change="changeStartPlaceholder"
           />
@@ -115,7 +115,7 @@
           :label="tFn('base.end.placeholder')"
         >
           <a-input
-            v-model="activeData.__config__['end-placeholder']"
+            v-model:value="activeData.__config__['end-placeholder']"
             :placeholder="`${tFn('base.enter')}${tFn('base.placeholder')}`"
             @change="changeEndPlaceholder"
           />
@@ -125,7 +125,7 @@
           :label="tFn('base.form.grid')"
         >
           <a-slider
-            v-model="activeData.__config__.span"
+            v-model:value="activeData.__config__.span"
             :max="24"
             :min="1"
             :marks="{ 12: '' }"
@@ -140,7 +140,7 @@
           :label="tFn('base.grid.space')"
         >
           <a-input-number
-            v-model="activeData.gutter"
+            v-model:value="activeData.gutter"
             :min="0"
             :placeholder="tFn('base.grid.space')"
           />
@@ -152,20 +152,17 @@
           "
           :label="tFn('base.layout.model')"
         >
-          <a-radio-group v-model="activeData.type" button-style="solid">
+          <a-radio-group v-model:value="activeData.type" button-style="solid">
             <a-radio-button value="default"> default </a-radio-button>
             <a-radio-button value="flex"> flex </a-radio-button>
           </a-radio-group>
         </a-form-item>
         <a-form-item
-          v-if="
-            activeData.justify !== undefined &&
-            activeData.type === 'flex'
-          "
+          v-if="activeData.justify !== undefined && activeData.type === 'flex'"
           :label="tFn('base.horizontal.arrangement')"
         >
           <a-select
-            v-model="activeData.justify"
+            v-model:value="activeData.justify"
             :placeholder="`${tFn('base.choose')}${tFn(
               'base.horizontal.arrangement'
             )}`"
@@ -181,26 +178,21 @@
           </a-select>
         </a-form-item>
         <a-form-item
-          v-if="
-            activeData.align !== undefined &&
-            activeData.type === 'flex'
-          "
+          v-if="activeData.align !== undefined && activeData.type === 'flex'"
           :label="tFn('base.vertical.arrangement')"
         >
-          <a-radio-group v-model="activeData.align" button-style="solid">
+          <a-radio-group v-model:value="activeData.align" button-style="solid">
             <a-radio-button value="top"> top </a-radio-button>
             <a-radio-button value="middle"> middle </a-radio-button>
             <a-radio-button value="bottom"> bottom </a-radio-button>
           </a-radio-group>
         </a-form-item>
         <a-form-item
-          v-if="
-            activeData.style && activeData.style.width !== undefined
-          "
+          v-if="activeData.style && activeData.style.width !== undefined"
           :label="tFn('base.component.width')"
         >
           <a-input
-            v-model="activeData.style.width"
+            v-model:value="activeData.style.width"
             :placeholder="`${tFn('base.enter')}${tFn('base.component.width')}`"
             allow-clear
           />
@@ -220,7 +212,7 @@
           :label="tFn('base.prefix')"
         >
           <a-input
-            v-model="activeData['prefix']"
+            v-model:value="activeData['prefix']"
             :placeholder="tFn('base.prefix')"
           />
         </a-form-item>
@@ -229,14 +221,13 @@
           :label="tFn('base.suffix')"
         >
           <a-input
-            v-model="activeData['suffix']"
+            v-model:value="activeData['suffix']"
             :placeholder="tFn('base.suffix')"
           />
         </a-form-item>
         <a-form-item
           v-if="
-            activeData.__slot__ &&
-            activeData.__slot__.addonBefore !== undefined
+            activeData.__slot__ && activeData.__slot__.addonBefore !== undefined
           "
           :label="tFn('base.icon.before')"
         >
@@ -265,8 +256,7 @@
         </a-form-item>
         <a-form-item
           v-if="
-            activeData.__slot__ &&
-            activeData.__slot__.addonAfter !== undefined
+            activeData.__slot__ && activeData.__slot__.addonAfter !== undefined
           "
           :label="tFn('base.icon.after')"
         >
@@ -316,7 +306,7 @@
           :label="tFn('base.separator')"
         >
           <a-input
-            v-model="activeData.separator"
+            v-model:value="activeData.separator"
             :placeholder="tFn('base.separator')"
           />
         </a-form-item>
@@ -325,7 +315,7 @@
           :label="tFn('base.min.row')"
         >
           <a-input-number
-            v-model="activeData.autoSize.minRows"
+            v-model:value="activeData.autoSize.minRows"
             :min="1"
             placeholder="tFn('base.min.row')"
           />
@@ -335,20 +325,20 @@
           :label="tFn('base.max.row')"
         >
           <a-input-number
-            v-model="activeData.autoSize.maxRows"
+            v-model:value="activeData.autoSize.maxRows"
             :min="1"
             :placeholder="tFn('base.max.row')"
           />
         </a-form-item>
         <a-form-item v-if="isShowMin" :label="tFn('base.min')">
           <a-input-number
-            v-model="activeData.min"
+            v-model:value="activeData.min"
             :placeholder="tFn('base.min')"
           />
         </a-form-item>
         <a-form-item v-if="isShowMax" :label="tFn('base.max')">
           <a-input-number
-            v-model="activeData.max"
+            v-model:value="activeData.max"
             :placeholder="tFn('base.max')"
           />
         </a-form-item>
@@ -357,7 +347,7 @@
           :label="tFn('base.total')"
         >
           <a-input-number
-            v-model="activeData.count"
+            v-model:value="activeData.count"
             :placeholder="tFn('base.total')"
           />
         </a-form-item>
@@ -366,14 +356,14 @@
           :label="tFn('base.component.height')"
         >
           <a-input-number
-            v-model="activeData.height"
+            v-model:value="activeData.height"
             :placeholder="tFn('base.component.height')"
             @input="changeRenderKey"
           />
         </a-form-item>
         <a-form-item v-if="isShowStep" :label="tFn('base.step')">
           <a-input-number
-            v-model="activeData.step"
+            v-model:value="activeData.step"
             :placeholder="tFn('base.step')"
           />
         </a-form-item>
@@ -382,7 +372,7 @@
           :label="tFn('base.most.enter')"
         >
           <a-input
-            v-model="activeData.maxLength"
+            v-model:value="activeData.maxLength"
             :placeholder="tFn('base.maxlength')"
           >
             <template slot="append">
@@ -394,20 +384,20 @@
           v-if="activeData['checked-children'] !== undefined"
           :label="tFn('base.checked')"
         >
-          <a-input v-model="activeData['checked-children']" />
+          <a-input v-model:value="activeData['checked-children']" />
         </a-form-item>
         <a-form-item
           v-if="activeData['un-checked-children'] !== undefined"
           :label="tFn('base.unchecked')"
         >
-          <a-input v-model="activeData['un-checked-children']" />
+          <a-input v-model:value="activeData['un-checked-children']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.name !== undefined"
           :label="tFn('base.file.field.name')"
         >
           <a-input
-            v-model="activeData.name"
+            v-model:value="activeData.name"
             :placeholder="tFn('base.file.field.name')"
           />
         </a-form-item>
@@ -416,7 +406,7 @@
           :label="tFn('base.file.type')"
         >
           <a-select
-            v-model="activeData.accept"
+            v-model:value="activeData.accept"
             :placeholder="tFn('base.choose')"
             :style="{ width: '100%' }"
             allow-clear
@@ -441,12 +431,12 @@
           :label="tFn('base.file.size')"
         >
           <a-input
-            v-model.number="activeData.__config__.fileSize"
+            v-model.number:value="activeData.__config__.fileSize"
             :placeholder="tFn('base.enter')"
           >
             <a-select
               slot="append"
-              v-model="activeData.__config__.sizeUnit"
+              v-mode:valuel="activeData.__config__.sizeUnit"
               :style="{ width: '66px' }"
             >
               <a-select-option value="KB"> KB </a-select-option>
@@ -460,7 +450,7 @@
           :label="tFn('base.upload.url')"
         >
           <a-input
-            v-model="activeData.action"
+            v-model:value="activeData.action"
             :placeholder="tFn('base.enter')"
             allow-clear
           />
@@ -469,7 +459,7 @@
           v-if="activeData['list-type'] !== undefined"
           :label="tFn('base.list.type')"
         >
-          <a-radio-group v-model="activeData['list-type']" button-style="solid">
+          <a-radio-group v-model:value="activeData['list-type']" button-style="solid">
             <a-radio-button value="text"> text </a-radio-button>
             <a-radio-button value="picture"> picture </a-radio-button>
             <a-radio-button value="picture-card"> picture-card </a-radio-button>
@@ -482,7 +472,7 @@
           "
           :label="tFn('base.button.type')"
         >
-          <a-select v-model="activeData.type" :style="{ width: '100%' }">
+          <a-select v-model:value="activeData.type" :style="{ width: '100%' }">
             <a-select-option value="default"> default </a-select-option>
             <a-select-option value="primary"> primary </a-select-option>
             <a-select-option value="dashed"> dashed </a-select-option>
@@ -495,7 +485,7 @@
           :label="tFn('base.button.shape')"
         >
           <a-select
-            v-model="activeData.shape"
+            v-model:value="activeData.shape"
             :style="{ width: '100%' }"
             allow-clear
           >
@@ -507,7 +497,7 @@
           v-if="activeData.__config__.tag === 'a-button'"
           :label="tFn('base.button.block')"
         >
-          <a-switch v-model="activeData.block" />
+          <a-switch v-model:value="activeData.block" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.buttonText !== undefined"
@@ -515,7 +505,7 @@
           :label="tFn('base.button.text')"
         >
           <a-input
-            v-model="activeData.__config__.buttonText"
+            v-model:value="activeData.__config__.buttonText"
             :placeholder="tFn('base.enter')"
           />
         </a-form-item>
@@ -524,7 +514,7 @@
           :label="tFn('base.button.text')"
         >
           <a-input
-            v-model="activeData.__slot__.default"
+            v-model:value="activeData.__slot__.default"
             :placeholder="tFn('base.enter')"
           />
         </a-form-item>
@@ -533,7 +523,7 @@
           :label="tFn('base.separator')"
         >
           <a-input
-            v-model="activeData.separator"
+            v-model:value="activeData.separator"
             :placeholder="tFn('base.separator')"
           />
         </a-form-item>
@@ -541,19 +531,19 @@
           v-if="activeData['show-time'] !== undefined"
           :label="tFn('base.time.choose')"
         >
-          <a-switch v-model="activeData['show-time']" />
+          <a-switch v-model:value="activeData['show-time']" />
         </a-form-item>
         <a-form-item
           v-if="activeData['show-today'] !== undefined"
           :label="tFn('base.show.today')"
         >
-          <a-switch v-model="activeData['show-today']" />
+          <a-switch v-model:value="activeData['show-today']" />
         </a-form-item>
         <a-form-item
           v-if="activeData['use12-hours'] !== undefined"
           :label="tFn('base.use12.hours')"
         >
-          <a-switch v-model="activeData['use12-hours']" />
+          <a-switch v-model:value="activeData['use12-hours']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.format !== undefined"
@@ -569,7 +559,7 @@
           v-if="activeData['enter-button'] !== undefined"
           :label="tFn('base.button.style')"
         >
-          <a-switch v-model="activeData['enter-button']" />
+          <a-switch v-model:value="activeData['enter-button']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-auto-complete'"
@@ -617,7 +607,7 @@
           v-if="activeData.__config__.tag === 'a-auto-complete'"
           :label="tFn('base.filter.option')"
         >
-          <a-switch v-model="activeData['filter-option']" />
+          <a-switch v-model:value="activeData['filter-option']" />
         </a-form-item>
         <a-form-item v-if="activeData.backfill !== undefined">
           <template slot="label">
@@ -629,22 +619,19 @@
               <a-icon type="question-circle" />
             </a-tooltip>
           </template>
-          <a-switch v-model="activeData.backfill" />
+          <a-switch v-model:value="activeData.backfill" />
         </a-form-item>
         <a-form-item
           v-if="activeData['default-open'] !== undefined"
           :label="tFn('base.default.open')"
         >
-          <a-switch v-model="activeData['default-open']" />
+          <a-switch v-model:value="activeData['default-open']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.placement !== undefined"
           :label="tFn('base.placement')"
         >
-          <a-radio-group
-            v-model="activeData.placement"
-            button-style="solid"
-          >
+          <a-radio-group v-model:value="activeData.placement" button-style="solid">
             <a-radio-button value="top"> top </a-radio-button>
             <a-radio-button value="bottom"> bottom </a-radio-button>
           </a-radio-group>
@@ -657,7 +644,7 @@
           :label="tFn('base.trigger.keyword')"
         >
           <a-input
-            v-model="activeData.prefix"
+            v-model:value="activeData.prefix"
             :placeholder="tFn('base.enter')"
           />
         </a-form-item>
@@ -666,7 +653,7 @@
           :label="tFn('base.separator')"
         >
           <a-input
-            v-model="activeData.split"
+            v-model:value="activeData.split"
             :placeholder="tFn('base.separator')"
           />
         </a-form-item>
@@ -696,7 +683,7 @@
                 <a-icon type="pic-left" />
               </div>
               <a-input
-                v-model="item.label"
+                v-model:value="item.label"
                 :placeholder="tFn('base.option.name')"
               />
               <a-input
@@ -742,7 +729,7 @@
                 <a-icon type="pic-left" />
               </div>
               <a-input
-                v-model="item.title"
+                v-model:value="item.title"
                 :placeholder="tFn('base.show.name')"
               />
               <a-input
@@ -773,9 +760,7 @@
 
         <template
           v-if="
-            ['a-cascader', 'a-tree-select'].includes(
-              activeData.__config__.tag
-            )
+            ['a-cascader', 'a-tree-select'].includes(activeData.__config__.tag)
           "
         >
           <a-divider>{{ tFn("base.option") }}</a-divider>
@@ -784,7 +769,7 @@
             :label="tFn('base.data.type')"
           >
             <a-radio-group
-              v-model="activeData.__config__.dataType"
+              v-model:value="activeData.__config__.dataType"
               size="small"
               button-style="solid"
             >
@@ -800,7 +785,7 @@
           <template v-if="activeData.__config__.dataType === 'dynamic'">
             <a-form-item :label="tFn('base.url')">
               <a-input
-                v-model="activeData.__config__.url"
+                v-model:value="activeData.__config__.url"
                 :title="activeData.__config__.url"
                 :placeholder="tFn('base.enter')"
                 allow-clear
@@ -808,7 +793,7 @@
               >
                 <a-select
                   slot="prepend"
-                  v-model="activeData.__config__.method"
+                  v-model:value="activeData.__config__.method"
                   :style="{ width: '85px' }"
                   @change="$emit('fetch-data', activeData)"
                 >
@@ -821,30 +806,28 @@
             </a-form-item>
             <a-form-item :label="tFn('base.data.path')">
               <a-input
-                v-model="activeData.__config__.dataPath"
+                v-model:value="activeData.__config__.dataPath"
                 :placeholder="tFn('base.enter')"
                 @blur="$emit('fetch-data', activeData)"
               />
             </a-form-item>
 
-            <template
-              v-if="activeData.props && activeData.props.props"
-            >
+            <template v-if="activeData.props && activeData.props.props">
               <a-form-item :label="tFn('base.prop.label')">
                 <a-input
-                  v-model="activeData.props.props.label"
+                  v-model:value="activeData.props.props.label"
                   :placeholder="tFn('base.enter')"
                 />
               </a-form-item>
               <a-form-item l:label="tFn('base.prop.value')">
                 <a-input
-                  v-model="activeData.props.props.value"
+                  v-model:value="activeData.props.props.value"
                   :placeholder="tFn('base.enter')"
                 />
               </a-form-item>
               <a-form-item :label="tFn('base.prop.children')">
                 <a-input
-                  v-model="activeData.props.props.children"
+                  v-model:value="activeData.props.props.children"
                   :placeholder="tFn('base.enter')"
                 />
               </a-form-item>
@@ -915,7 +898,7 @@
           :label="tFn('base.option.type')"
         >
           <a-radio-group
-            v-model="activeData.__config__.optionType"
+            v-model:value="activeData.__config__.optionType"
             button-style="solid"
           >
             <a-radio-button value="default">
@@ -931,34 +914,31 @@
           v-if="activeData.__config__.showLabel !== undefined"
           :label="tFn('base.show.label')"
         >
-          <a-switch v-model="activeData.__config__.showLabel" />
+          <a-switch v-model:value="activeData.__config__.showLabel" />
         </a-form-item>
         <a-form-item
           v-if="activeData['allow-half'] !== undefined"
           :label="tFn('base.allow.half')"
         >
-          <a-switch v-model="activeData['allow-half']" />
+          <a-switch v-model:value="activeData['allow-half']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-rate'"
           :label="tFn('base.character')"
         >
-          <a-input
-            v-model="activeData.character"
-            @change="characterChange"
-          />
+          <a-input v-model:value="activeData.character" @change="characterChange" />
         </a-form-item>
         <a-form-item
           v-if="activeData.reverse !== undefined"
           :label="tFn('base.reverse')"
         >
-          <a-switch v-model="activeData.reverse" />
+          <a-switch v-model:value="activeData.reverse" />
         </a-form-item>
         <a-form-item
           v-if="activeData.range !== undefined"
           :label="tFn('base.range')"
         >
-          <a-switch v-model="activeData.range" @change="rangeChange" />
+          <a-switch v-model:value="activeData.range" @change="rangeChange" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -967,10 +947,7 @@
           "
           :label="tFn('base.button.style')"
         >
-          <a-radio-group
-            v-model="activeData.buttonStyle"
-            button-style="solid"
-          >
+          <a-radio-group v-model:value="activeData.buttonStyle" button-style="solid">
             <a-radio-button value="outline">
               {{ tFn("base.button.style.outline") }}
             </a-radio-button>
@@ -983,7 +960,7 @@
           v-if="activeData.size !== undefined"
           :label="tFn('base.component.size')"
         >
-          <a-radio-group v-model="activeData.size" button-style="solid">
+          <a-radio-group v-model:value="activeData.size" button-style="solid">
             <a-radio-button
               v-if="activeData.__config__.tag !== 'a-switch'"
               value="large"
@@ -1002,14 +979,14 @@
           v-if="activeData['show-word-limit'] !== undefined"
           :label="tFn('base.word.limit')"
         >
-          <a-switch v-model="activeData['show-word-limit']" />
+          <a-switch v-model:value="activeData['show-word-limit']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-cascader'"
           :label="tFn('base.expand.trigger')"
         >
           <a-radio-group
-            v-model="activeData['expand-trigger']"
+            v-model:value="activeData['expand-trigger']"
             button-style="solid"
           >
             <a-radio-button value="click"> click </a-radio-button>
@@ -1020,43 +997,43 @@
           v-if="activeData.__config__.tag === 'a-cascader'"
           :label="tFn('base.change.on.select')"
         >
-          <a-switch v-model="activeData['change-on-select']" />
+          <a-switch v-model:value="activeData['change-on-select']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.allowClear !== undefined"
           :label="tFn('base.allow.clear')"
         >
-          <a-switch v-model="activeData.allowClear" />
+          <a-switch v-model:value="activeData.allowClear" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-upload'"
           :label="tFn('base.file.multiple')"
         >
-          <a-switch v-model="activeData.multiple" />
+          <a-switch v-model:value="activeData.multiple" />
         </a-form-item>
         <a-form-item
           v-if="activeData['input-read-only'] !== undefined"
           :label="tFn('base.read.only')"
         >
-          <a-switch v-model="activeData['input-read-only']" />
+          <a-switch v-model:value="activeData['input-read-only']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.disabled !== undefined"
           :label="tFn('base.disabled')"
         >
-          <a-switch v-model="activeData.disabled" />
+          <a-switch v-model:value="activeData.disabled" />
         </a-form-item>
         <a-form-item
           v-if="activeData.showSearch !== undefined"
           :label="tFn('base.show.search')"
         >
-          <a-switch v-model="activeData.showSearch" />
+          <a-switch v-model:value="activeData.showSearch" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-select'"
           :label="tFn('base.mode')"
         >
-          <a-radio-group v-model="activeData.mode" button-style="solid">
+          <a-radio-group v-model:value="activeData.mode" button-style="solid">
             <a-radio-button value="default">
               {{ tFn("base.default") }}
             </a-radio-button>
@@ -1069,19 +1046,19 @@
           v-if="activeData.__config__.required !== undefined"
           :label="tFn('base.required')"
         >
-          <a-switch v-model="activeData.__config__.required" />
+          <a-switch v-model:value="activeData.__config__.required" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-tree-select'"
           :label="tFn('base.dropdown.matc.select.width')"
         >
-          <a-switch v-model="activeData['dropdown-matc-select-width']" />
+          <a-switch v-model:value="activeData['dropdown-matc-select-width']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-tree-select'"
           :label="tFn('base.tree.default.expand.all')"
         >
-          <a-switch v-model="activeData['tree-default-expand-all']" />
+          <a-switch v-model:value="activeData['tree-default-expand-all']" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -1090,13 +1067,13 @@
           "
           :label="tFn('base.multiple')"
         >
-          <a-switch v-model="activeData.multiple" />
+          <a-switch v-model:value="activeData.multiple" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-tree-select'"
           :label="tFn('base.tree.checkable')"
         >
-          <a-switch v-model="activeData['tree-checkable']" />
+          <a-switch v-model:value="activeData['tree-checkable']" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -1105,7 +1082,7 @@
           "
           :label="tFn('base.tree.check.strictly')"
         >
-          <a-switch v-model="activeData['tree-check-strictly']" />
+          <a-switch v-model:value="activeData['tree-check-strictly']" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -1114,7 +1091,7 @@
           "
           :label="tFn('base.label.in.value')"
         >
-          <a-switch v-model="activeData['label-in-value']" />
+          <a-switch v-model:value="activeData['label-in-value']" />
         </a-form-item>
 
         <template v-if="activeData.__config__.layoutTree">
@@ -1161,7 +1138,7 @@
             </span>
             <a-form-item :label="tFn('base.pattern')">
               <a-auto-complete
-                v-model="item.pattern"
+                v-model:value="item.pattern"
                 :dataSource="patternSource"
                 :placeholder="tFn('base.enter.pattern')"
                 :filter-option="filterOption"
@@ -1174,7 +1151,7 @@
               style="margin-bottom: 0"
             >
               <a-input
-                v-model="item.message"
+                v-model:value="item.message"
                 :placeholder="tFn('base.enter')"
               />
             </a-form-item>
@@ -1185,27 +1162,33 @@
         </template>
       </a-form>
       <!-- 表单属性 -->
-      <a-form v-show="currentTab === 'form'" size="small" label-width="90px">
+      <a-form
+      :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 16 }"
+        v-show="currentTab === 'form'"
+        size="small"
+        label-width="90px"
+      >
         <a-form-item :label="tFn('base.form.name')">
           <a-input
-            v-model="formConf.formRef"
+            v-model:value="formConf.formRef"
             :placeholder="`${tFn('base.enter')}${tFn('base.form.name')}(ref)`"
           />
         </a-form-item>
         <a-form-item :label="tFn('base.form.model')">
           <a-input
-            v-model="formConf.formModel"
+            v-model:value="formConf.formModel"
             :placeholder="tFn('base.enter')"
           />
         </a-form-item>
         <a-form-item :label="tFn('base.form.rules')">
           <a-input
-            v-model="formConf.formRules"
+            v-model:value="formConf.formRules"
             :placeholder="tFn('base.enter')"
           />
         </a-form-item>
         <a-form-item :label="tFn('base.form.layout')">
-          <a-radio-group v-model="formConf.layout" button-style="solid">
+          <a-radio-group v-model:value="formConf.layout" button-style="solid">
             <a-radio-button value="horizontal">
               {{ tFn("base.form.layout.horizontal") }}
             </a-radio-button>
@@ -1227,28 +1210,28 @@
           v-if="formConf.layout === 'horizontal'"
           :label="tFn('base.form.label.span')"
         >
-          <a-input v-model="formConf.labelCol.span" />
+          <a-input v-model:value="formConf.labelCol.span" />
         </a-form-item>
         <a-form-item
           v-if="formConf.layout === 'horizontal'"
           :label="tFn('base.form.label.offset')"
         >
-          <a-input v-model="formConf.labelCol.offset" />
+          <a-input v-model:value="formConf.labelCol.offset" />
         </a-form-item>
         <a-form-item
           v-if="formConf.layout === 'horizontal'"
           :label="tFn('base.form.wrapper.span')"
         >
-          <a-input v-model="formConf.wrapperCol.span" />
+          <a-input v-model:value="formConf.wrapperCol.span" />
         </a-form-item>
         <a-form-item
           v-if="formConf.layout === 'horizontal'"
           :label="tFn('base.form.wrapper.offset')"
         >
-          <a-input v-model="formConf.wrapperCol.offset" />
+          <a-input v-model:value="formConf.wrapperCol.offset" />
         </a-form-item>
         <a-form-item :label="tFn('base.label.align')">
-          <a-radio-group v-model="formConf.labelAlign" button-style="solid">
+          <a-radio-group v-model:value="formConf.labelAlign" button-style="solid">
             <a-radio-button value="left">
               {{ tFn("base.label.align.left") }}
             </a-radio-button>
@@ -1258,16 +1241,16 @@
           </a-radio-group>
         </a-form-item>
         <a-form-item :label="tFn('base.grid.space')">
-          <a-input-number v-model="formConf.gutter" :min="0" />
+          <a-input-number v-model:value="formConf.gutter" :min="0" />
         </a-form-item>
         <a-form-item :label="tFn('base.form.disabled')">
-          <a-switch v-model="formConf.disabled" />
+          <a-switch v-model:value="formConf.disabled" />
         </a-form-item>
         <a-form-item :label="tFn('base.form.button')">
-          <a-switch v-model="formConf.formBtns" />
+          <a-switch v-model:value="formConf.formBtns" />
         </a-form-item>
         <a-form-item :label="tFn('base.un.focused.component.border')">
-          <a-switch v-model="formConf.unFocusedComponentBorder" />
+          <a-switch v-model:value="formConf.unFocusedComponentBorder" />
         </a-form-item>
       </a-form>
     </div>
@@ -1290,7 +1273,7 @@
 
     <!-- 图标选择器 -->
     <a-modal
-      v-model="iconsVisible"
+      v-model:value="iconsVisible"
       :footer="null"
       width="40%"
       :title="tFn('base.icon.component')"
@@ -1316,7 +1299,7 @@
 import allIcon from "@/core/icons";
 import { isArray } from "util";
 import TreeNodeModal from "@/views/index/TreeNodeModal";
-import { isNumberStr,setObject } from "@/utils/index";
+import { isNumberStr, setObject } from "@/utils/index";
 import {
   inputComponents,
   selectComponents,
@@ -1347,11 +1330,10 @@ export default defineComponent({
     activeData: Object,
     formConf: Object,
   },
-  emits:['tag-change'],
-  setup(props,{emit}) {
-
+  emits: ["tag-change"],
+  setup(props, { emit }) {
     const currentTab = ref("field");
-    const formConf = ref({...props.formConf});
+    const formConf = ref({ ...props.formConf });
     const showField = ref(props.showField);
     const treeNodeModal = ref();
     const justifyOptions = ref([
@@ -1381,7 +1363,7 @@ export default defineComponent({
         __config__: { regList: [], options: [], placeholder: [], tag: [] },
       },
       dataSource: [],
-      ...props.activeData
+      ...props.activeData,
     });
     const idGlobal = ref(0);
     const currentNode = ref([]);
@@ -1543,9 +1525,7 @@ export default defineComponent({
         activeData.__config__.defaultValue = JSON.parse(str);
       } else {
         // 字符串和数字
-        activeData.__config__.defaultValue = isNumberStr(str)
-          ? +str
-          : str;
+        activeData.__config__.defaultValue = isNumberStr(str) ? +str : str;
       }
     }
 
@@ -1675,12 +1655,11 @@ export default defineComponent({
 
     watch(
       props.activeData,
-      (val)=>{
-        setObject(val,activeData)
+      (val) => {
+        setObject(val, activeData);
       },
-      {deep:true}
-    )
-
+      { deep: true }
+    );
 
     return {
       allIcon,
@@ -1817,5 +1796,4 @@ export default defineComponent({
   color: #fff;
   font-size: 18px;
 }
-
 </style>
