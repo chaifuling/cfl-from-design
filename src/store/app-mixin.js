@@ -8,7 +8,8 @@ const baseMixin = {
       idGlobal: state => state.app.idGlobal,
       treeNodeId: state => state.app.treeNodeId,
       formConf: state => state.app.formConf,
-      lang: state => state.app.lang
+      lang: state => state.app.lang,
+      activeData: state => state.app.activeData,
     })
   },
   methods: {

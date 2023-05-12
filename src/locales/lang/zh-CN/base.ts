@@ -98,6 +98,7 @@ export default {
   'base.label.align.right': '右对齐',
   'base.grid.space': '栅格间隔',
   'base.layout.model': '布局模式',
+  "base.letter.number.underliner":"字母/数字/下划线",
   'base.horizontal.arrangement': '水平排列',
   'base.vertical.arrangement': '垂直排列',
   'base.component.width': '组件宽度',

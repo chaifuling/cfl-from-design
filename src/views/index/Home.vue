@@ -262,7 +262,7 @@ import {
   titleCase,
   deepClone,
   isObjectObject,
-  setObject
+  setObject,
 } from "@/utils/index";
 import {
   makeUpHtml,
@@ -276,13 +276,14 @@ import drawingDefalut from "@/components/generator/drawingDefalut";
 import logo from "@/assets/logo.png";
 import CodeTypeModal from "./CodeTypeModal";
 import DraggableItem from "./DraggableItem";
-import { DRAWING_ITEMS, DRAWING_ID } from "@/store/mutation-types";
+import { DRAWING_ITEMS, DRAWING_ID,ACTIVE_DATA } from "@/store/mutation-types";
 import loadBeautifier from "@/utils/loadBeautifier";
 import SelectLang from "@/components/SelectLang";
 import { tFn } from "@/hook/useI18n";
 import { baseMixin } from "@/store/app-mixin";
 import { notification } from "ant-design-vue";
 import axios from "axios";
+import { formConf } from "@/components/generator/config";
 import { Form } from "ant-design-vue";
 import {
   PlayCircleOutlined,
@@ -294,6 +295,8 @@ import {
   ControlOutlined,
   SaveOutlined,
 } from "@ant-design/icons-vue";
+import { useStore } from "vuex";
+
 let beautifier;
 let tempActiveData;
 const useForm = Form.useForm;
@@ -318,7 +321,7 @@ export default defineComponent({
     ControlOutlined,
     SaveOutlined,
   },
-  emits: ["save","change"],
+  emits: ["save", "change"],
   mixins: [baseMixin],
   props: {
     formConfig: {
@@ -328,13 +331,14 @@ export default defineComponent({
         name: "",
         status: "",
         remark: "",
-        formConf: {}, // 表单配置
+        formConf: formConf, // 表单配置
         drawingList: drawingDefalut, // 表单项的数组
       },
     },
     title: String,
   },
   setup(props, { emit }) {
+    const store = useStore();
     const instance = getCurrentInstance(); // 获取当前实例
     const showSave = ref(false); // 定义一个showSave变量，并将其初始化为false（使用Vue响应式引用）
     let collapsed = reactive(false); // 定义一个collapsed变量，并将其初始化为false（使用Vue响应式对象）
@@ -372,7 +376,7 @@ export default defineComponent({
     let jsonDrawer = ref(null); // 定义一个jsonDrawer变量，并将其初始化为null（使用Vue响应式引用）
     let codeTypeModal = ref(null); // 定义一个codeTypeModal变量，并将其初始化为null（使用Vue响应式引用）
     let formData = reactive({}); // 定义一个formData对象（使用Vue响应式对象）
-    let activeData = reactive({}); // 定义一个activeData对象（使用Vue响应式对象）
+    let activeData = reactive(store.state.app.activeData);
     let oldActiveId = ref(null); // 定义一个oldActiveId变量，并将其初始化为null（使用Vue响应式引用）
     let drawingItems = ref(null); // 定义一个drawingItems变量，并将其初始化为null（使用Vue响应式引用）
     let idGlobal = ref(100); // 定义一个idGlobal变量，并将其初始化为100（使用Vue响应式引用）
@@ -397,7 +401,7 @@ export default defineComponent({
 
     // 定义一个activeFormItem函数，用于激活当前表单项
     function activeFormItem(currentItem) {
-      setObject(currentItem,activeData)
+      store.commit(ACTIVE_DATA, store.state.app.activeData);
       activeId.value = currentItem.__config__.formId;
     }
 
@@ -459,8 +463,8 @@ export default defineComponent({
         ) {
           return;
         }
-        // activeData.placeholder =
-        //   activeData.placeholder.replace(oldVal, '') + val;
+        activeData.placeholder =
+          activeData.placeholder.replace(oldVal, "") + val;
       }
     );
     // 监听activeData.__config__.label的变化
@@ -484,6 +488,16 @@ export default defineComponent({
     );
 
     watch(
+      activeData,
+      (val) => {
+        setObject(store.state.app.activeData, activeData);
+        store.commit(ACTIVE_DATA, activeData);
+      },
+      { deep: true }
+    );
+
+
+    watch(
       () => props.formConfig,
       (newVal, oldVal) => {
         savaFormData.name = newVal.name;
@@ -499,10 +513,10 @@ export default defineComponent({
       { deep: true }
     );
 
-    function formChange(index,list){
-        drawingList[index] = list;
-        emit('change',drawingList);
-    };
+    function formChange(index, list) {
+      drawingList[index] = list;
+      emit("change", drawingList);
+    }
 
     // 在页面挂载后执行以下操作
     onMounted(() => {
@@ -519,7 +533,6 @@ export default defineComponent({
       clipboard.on("error", (e) => {
         message.error(tFn("base.code.copy.failed"));
       });
-
 
       loadBeautifier((btf) => {
         beautifier = btf;
@@ -559,7 +572,6 @@ export default defineComponent({
     // 获取响应数据的函数
     function fetchData(component) {
       const { dataType, method, url } = component.__config__;
-
       if (dataType === "dynamic" && method && url) {
         setLoading(component, true);
         axios({
@@ -585,12 +597,10 @@ export default defineComponent({
     function onEnd(obj) {
       if (obj.from !== obj.to) {
         fetchData(tempActiveData);
-        setObject(tempActiveData ,activeData);
+        setObject(tempActiveData, activeData);
         activeId.value = idGlobal.value;
       }
     }
-
-    
 
     // 添加表单项的函数
     function addComponent(item) {
@@ -781,8 +791,7 @@ export default defineComponent({
       activeData.__config__.tagIcon = config.tagIcon;
       activeData.__config__.document = config.document;
       if (
-        typeof activeData.__config__.defaultValue ===
-        typeof config.defaultValue
+        typeof activeData.__config__.defaultValue === typeof config.defaultValue
       ) {
         config.defaultValue = activeData.__config__.defaultValue;
       }
@@ -791,12 +800,12 @@ export default defineComponent({
           newTag[key] = activeData[key];
         }
       });
-      setObject(newTag,activeData);
+      setObject(newTag, activeData);
       updateDrawingList(newTag, drawingList);
     }
 
     function refreshJson(data) {
-      const fields =  deepClone(data.fields);
+      const fields = deepClone(data.fields);
       fields.forEach((item, index) => {
         drawingList.splice(index, 1, item);
       });
@@ -862,7 +871,7 @@ export default defineComponent({
       validate,
       handelConfirm,
       handleColse,
-      formChange
+      formChange,
     };
   },
 });

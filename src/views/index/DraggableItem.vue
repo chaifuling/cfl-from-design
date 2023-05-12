@@ -4,6 +4,8 @@ import render from "@/components/render/render";
 import { CopyOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { createVNode, reactive, defineComponent, watch, ref } from "vue";
 import { tFn } from "@/hook/useI18n";
+import { useStore } from "vuex";
+import { ACTIVE_DATA } from "@/store/mutation-types";
 
 const components = {
   itemBtns(
@@ -56,13 +58,16 @@ const layouts = {
     formConf,
     activeId
   ) {
+    debugger
     const { onActiveItem, onFromChange } = attrs;
-    currentItem = reactive(currentItem);
-    const config = reactive(currentItem.__config__);
+    const store = useStore();
+    store.commit(ACTIVE_DATA, currentItem);
+    const activeData =store.state.app.activeData;
+    const config = reactive(activeData.__config__);
     const child = renderChildren.apply(this, arguments);
     // 穿梭框特殊处理
     if (config.tag === "a-transfer") {
-      currentItem.render = (item) => {
+      activeData.render = (item) => {
         return createVNode(
           "div",
           { key: item.title, value: item.key },
@@ -81,7 +86,7 @@ const layouts = {
         class={className}
         onClick={(event) => {
           if (onActiveItem) {
-            onActiveItem(currentItem);
+            onActiveItem(activeData);
           }
           event.stopPropagation();
         }}
@@ -93,7 +98,7 @@ const layouts = {
           <render
             disabled={disabled}
             key={config.renderKey}
-            conf={currentItem}
+            conf={activeData}
             onInput={(event) => {
               let value = event;
               if (
@@ -106,12 +111,14 @@ const layouts = {
                 value = event.target.value;
               }
               config.defaultValue = value;
-              currentItem.__config__ = config;
-              onFromChange(index, currentItem);
+              activeData.__config__ = config;
+          
               // 穿梭框特殊处理
               if (config.tag === "a-transfer") {
-                currentItem["target-keys"] = value;
+                activeData["target-keys"] = value;
               }
+              store.commit(ACTIVE_DATA, props.currentItem);
+              onFromChange(index, activeData);
             }}
           >
             {child}
@@ -234,7 +241,7 @@ export default defineComponent({
     watch(
       props,
       (newVal) => {
-        
+        debugger
         index.value = newVal.index;
         showIcon.value = newVal.showIcon;
         activeId.value = newVal.activeId;

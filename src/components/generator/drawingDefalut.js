@@ -1,3 +1,5 @@
+import {ref} from 'vue'
+
 export default [
   {
     __config__: {
@@ -29,7 +31,7 @@ export default [
     maxLength: null,
     disabled: false,
     size: 'default',
-    prefix: '',
+    prefix: ref(''),
     suffix: '',
   },
 ]

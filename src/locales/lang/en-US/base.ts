@@ -12,6 +12,7 @@ export default {
   'base.add': 'Add',
   'base.open': 'Open',
   'base.colse': 'Colse',
+  "base.letter.number.underliner":"letter/number/underliner",
   'base.remark': 'Remark',
   'base.status': 'Status',
   'base.remove': 'Remove',

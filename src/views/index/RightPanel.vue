@@ -208,98 +208,22 @@
           />
         </a-form-item>
         <a-form-item
-          v-if="activeData['prefix'] !== undefined"
+          v-if="activeData.prefix !== undefined"
           :label="tFn('base.prefix')"
         >
           <a-input
-            v-model:value="activeData['prefix']"
+            v-model:value="activeData.prefix"
             :placeholder="tFn('base.prefix')"
           />
         </a-form-item>
         <a-form-item
-          v-if="activeData['suffix'] !== undefined"
+          v-if="activeData.suffix !== undefined"
           :label="tFn('base.suffix')"
         >
           <a-input
-            v-model:value="activeData['suffix']"
+            v-model:value="activeData.suffix"
             :placeholder="tFn('base.suffix')"
           />
-        </a-form-item>
-        <a-form-item
-          v-if="
-            activeData.__slot__ && activeData.__slot__.addonBefore !== undefined
-          "
-          :label="tFn('base.icon.before')"
-        >
-          <a-space size="large">
-            <a-icon
-              v-if="activeData.__slot__.addonBefore"
-              :type="activeData.__slot__.addonBefore"
-            />
-            <a-button
-              type="dashed"
-              @click="openIconsModal('addonBefore', true)"
-            >
-              {{ tFn("base.icon.choose") }}
-            </a-button>
-            <a-button
-              v-if="
-                activeData.__slot__.addonBefore &&
-                activeData.__slot__.addonBefore !== ''
-              "
-              type="dashed"
-              @click="activeData.__slot__.addonBefore = ''"
-            >
-              {{ tFn("base.empty") }}
-            </a-button>
-          </a-space>
-        </a-form-item>
-        <a-form-item
-          v-if="
-            activeData.__slot__ && activeData.__slot__.addonAfter !== undefined
-          "
-          :label="tFn('base.icon.after')"
-        >
-          <a-space size="large">
-            <a-icon
-              v-if="activeData.__slot__.addonAfter"
-              :type="activeData.__slot__.addonAfter"
-            />
-            <a-button type="dashed" @click="openIconsModal('addonAfter', true)">
-              {{ tFn("base.icon.choose") }}
-            </a-button>
-            <a-button
-              v-if="
-                activeData.__slot__.addonAfter &&
-                activeData.__slot__.addonAfter !== ''
-              "
-              type="dashed"
-              @click="activeData.__slot__.addonAfter = ''"
-            >
-              {{ tFn("base.empty") }}
-            </a-button>
-          </a-space>
-        </a-form-item>
-        <a-form-item
-          v-if="
-            activeData['icon'] !== undefined &&
-            activeData.__config__.tag === 'a-button'
-          "
-          :label="tFn('base.button.icon')"
-        >
-          <a-space size="large">
-            <a-icon :type="activeData['icon']" />
-            <a-button type="dashed" @click="openIconsModal('icon', false)">
-              {{ tFn("base.icon.choose") }}
-            </a-button>
-            <a-button
-              v-if="activeData['icon'] && activeData['icon'] !== ''"
-              type="dashed"
-              @click="activeData['icon'] = ''"
-            >
-              {{ tFn("base.empty") }}
-            </a-button>
-          </a-space>
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-cascader'"
@@ -497,7 +421,7 @@
           v-if="activeData.__config__.tag === 'a-button'"
           :label="tFn('base.button.block')"
         >
-          <a-switch v-model:value="activeData.block" />
+          <a-switch v-model:checked="activeData.block" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.buttonText !== undefined"
@@ -531,19 +455,19 @@
           v-if="activeData['show-time'] !== undefined"
           :label="tFn('base.time.choose')"
         >
-          <a-switch v-model:value="activeData['show-time']" />
+          <a-switch v-model:checked="activeData['show-time']" />
         </a-form-item>
         <a-form-item
           v-if="activeData['show-today'] !== undefined"
           :label="tFn('base.show.today')"
         >
-          <a-switch v-model:value="activeData['show-today']" />
+          <a-switch v-model:checked="activeData['show-today']" />
         </a-form-item>
         <a-form-item
           v-if="activeData['use12-hours'] !== undefined"
           :label="tFn('base.use12.hours')"
         >
-          <a-switch v-model:value="activeData['use12-hours']" />
+          <a-switch v-model:checked="activeData['use12-hours']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.format !== undefined"
@@ -559,7 +483,7 @@
           v-if="activeData['enter-button'] !== undefined"
           :label="tFn('base.button.style')"
         >
-          <a-switch v-model:value="activeData['enter-button']" />
+          <a-switch v-model:checked="activeData['enter-button']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-auto-complete'"
@@ -607,7 +531,7 @@
           v-if="activeData.__config__.tag === 'a-auto-complete'"
           :label="tFn('base.filter.option')"
         >
-          <a-switch v-model:value="activeData['filter-option']" />
+          <a-switch v-model:checked="activeData['filter-option']" />
         </a-form-item>
         <a-form-item v-if="activeData.backfill !== undefined">
           <template slot="label">
@@ -619,13 +543,13 @@
               <a-icon type="question-circle" />
             </a-tooltip>
           </template>
-          <a-switch v-model:value="activeData.backfill" />
+          <a-switch v-model:checked="activeData.backfill" />
         </a-form-item>
         <a-form-item
           v-if="activeData['default-open'] !== undefined"
           :label="tFn('base.default.open')"
         >
-          <a-switch v-model:value="activeData['default-open']" />
+          <a-switch v-model:checked="activeData['default-open']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.placement !== undefined"
@@ -914,13 +838,13 @@
           v-if="activeData.__config__.showLabel !== undefined"
           :label="tFn('base.show.label')"
         >
-          <a-switch v-model:value="activeData.__config__.showLabel" />
+          <a-switch v-model:checked="activeData.__config__.showLabel" />
         </a-form-item>
         <a-form-item
           v-if="activeData['allow-half'] !== undefined"
           :label="tFn('base.allow.half')"
         >
-          <a-switch v-model:value="activeData['allow-half']" />
+          <a-switch v-model:checked="activeData['allow-half']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-rate'"
@@ -932,13 +856,13 @@
           v-if="activeData.reverse !== undefined"
           :label="tFn('base.reverse')"
         >
-          <a-switch v-model:value="activeData.reverse" />
+          <a-switch v-model:checked="activeData.reverse" />
         </a-form-item>
         <a-form-item
           v-if="activeData.range !== undefined"
           :label="tFn('base.range')"
         >
-          <a-switch v-model:value="activeData.range" @change="rangeChange" />
+          <a-switch v-model:checked="activeData.range" @change="rangeChange" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -979,7 +903,7 @@
           v-if="activeData['show-word-limit'] !== undefined"
           :label="tFn('base.word.limit')"
         >
-          <a-switch v-model:value="activeData['show-word-limit']" />
+          <a-switch v-model:checked="activeData['show-word-limit']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-cascader'"
@@ -997,37 +921,37 @@
           v-if="activeData.__config__.tag === 'a-cascader'"
           :label="tFn('base.change.on.select')"
         >
-          <a-switch v-model:value="activeData['change-on-select']" />
+          <a-switch v-model:checked="activeData['change-on-select']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.allowClear !== undefined"
           :label="tFn('base.allow.clear')"
         >
-          <a-switch v-model:value="activeData.allowClear" />
+          <a-switch v-model:checked="activeData.allowClear" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-upload'"
           :label="tFn('base.file.multiple')"
         >
-          <a-switch v-model:value="activeData.multiple" />
+          <a-switch v-model:checked="activeData.multiple" />
         </a-form-item>
         <a-form-item
           v-if="activeData['input-read-only'] !== undefined"
           :label="tFn('base.read.only')"
         >
-          <a-switch v-model:value="activeData['input-read-only']" />
+          <a-switch v-model:checked="activeData['input-read-only']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.disabled !== undefined"
           :label="tFn('base.disabled')"
         >
-          <a-switch v-model:value="activeData.disabled" />
+          <a-switch v-model:checked="activeData.disabled" />
         </a-form-item>
         <a-form-item
           v-if="activeData.showSearch !== undefined"
           :label="tFn('base.show.search')"
         >
-          <a-switch v-model:value="activeData.showSearch" />
+          <a-switch v-model:checked="activeData.showSearch" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-select'"
@@ -1046,19 +970,19 @@
           v-if="activeData.__config__.required !== undefined"
           :label="tFn('base.required')"
         >
-          <a-switch v-model:value="activeData.__config__.required" />
+          <a-switch v-model:checked="activeData.__config__.required" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-tree-select'"
           :label="tFn('base.dropdown.matc.select.width')"
         >
-          <a-switch v-model:value="activeData['dropdown-matc-select-width']" />
+          <a-switch v-model:checked="activeData['dropdown-matc-select-width']" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-tree-select'"
           :label="tFn('base.tree.default.expand.all')"
         >
-          <a-switch v-model:value="activeData['tree-default-expand-all']" />
+          <a-switch v-model:checked="activeData['tree-default-expand-all']" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -1067,13 +991,13 @@
           "
           :label="tFn('base.multiple')"
         >
-          <a-switch v-model:value="activeData.multiple" />
+          <a-switch v-model:checked="activeData.multiple" />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-tree-select'"
           :label="tFn('base.tree.checkable')"
         >
-          <a-switch v-model:value="activeData['tree-checkable']" />
+          <a-switch v-model:checked="activeData['tree-checkable']" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -1082,7 +1006,7 @@
           "
           :label="tFn('base.tree.check.strictly')"
         >
-          <a-switch v-model:value="activeData['tree-check-strictly']" />
+          <a-switch v-model:checked="activeData['tree-check-strictly']" />
         </a-form-item>
         <a-form-item
           v-if="
@@ -1091,7 +1015,7 @@
           "
           :label="tFn('base.label.in.value')"
         >
-          <a-switch v-model:value="activeData['label-in-value']" />
+          <a-switch v-model:checked="activeData['label-in-value']" />
         </a-form-item>
 
         <template v-if="activeData.__config__.layoutTree">
@@ -1141,7 +1065,6 @@
                 v-model:value="item.pattern"
                 :dataSource="patternSource"
                 :placeholder="tFn('base.enter.pattern')"
-                :filter-option="filterOption"
                 option-label-prop="value"
                 allow-clear
               />
@@ -1244,13 +1167,13 @@
           <a-input-number v-model:value="formConf.gutter" :min="0" />
         </a-form-item>
         <a-form-item :label="tFn('base.form.disabled')">
-          <a-switch v-model:value="formConf.disabled" />
+          <a-switch v-model:checked="formConf.disabled" />
         </a-form-item>
         <a-form-item :label="tFn('base.form.button')">
-          <a-switch v-model:value="formConf.formBtns" />
+          <a-switch v-model:checked="formConf.formBtns" />
         </a-form-item>
         <a-form-item :label="tFn('base.un.focused.component.border')">
-          <a-switch v-model:value="formConf.unFocusedComponentBorder" />
+          <a-switch v-model:checked="formConf.unFocusedComponentBorder" />
         </a-form-item>
       </a-form>
     </div>
@@ -1271,22 +1194,6 @@
       </a-tooltip>
     </div>
 
-    <!-- 图标选择器 -->
-    <a-modal
-      v-model:value="iconsVisible"
-      :footer="null"
-      width="40%"
-      :title="tFn('base.icon.component')"
-    >
-      <icon-selector
-        :value="
-          iconsVisible && currentIconModelSlot
-            ? activeData.__slot__[currentIconModel]
-            : activeData[currentIconModel]
-        "
-        @change="handleIconChange"
-      />
-    </a-modal>
     <treeNode-modal
       ref="treeNodeModal"
       :title="tFn('base.add.option')"
@@ -1304,8 +1211,7 @@ import {
   inputComponents,
   selectComponents,
 } from "@/components/generator/config";
-import IconSelector from "@/components/IconSelector";
-import { FORM_CONF } from "@/store/mutation-types";
+import { FORM_CONF,ACTIVE_DATA } from "@/store/mutation-types";
 import { LinkOutlined } from "@ant-design/icons-vue";
 import {
   defineComponent,
@@ -1315,6 +1221,8 @@ import {
   reactive,
   onMounted,
 } from "vue";
+import { tFn } from "@/hook/useI18n";
+import { useStore } from "vuex";
 
 // 使changeRenderKey在目标组件改变时可用
 const needRerenderList = [];
@@ -1322,7 +1230,6 @@ const needRerenderList = [];
 export default defineComponent({
   components: {
     TreeNodeModal,
-    IconSelector,
     LinkOutlined,
   },
   props: {
@@ -1332,6 +1239,7 @@ export default defineComponent({
   },
   emits: ["tag-change"],
   setup(props, { emit }) {
+    const store = useStore();
     const currentTab = ref("field");
     const formConf = ref({ ...props.formConf });
     const showField = ref(props.showField);
@@ -1359,10 +1267,6 @@ export default defineComponent({
       },
     ]);
     const activeData = reactive({
-      value: {
-        __config__: { regList: [], options: [], placeholder: [], tag: [] },
-      },
-      dataSource: [],
       ...props.activeData,
     });
     const idGlobal = ref(0);
@@ -1392,27 +1296,27 @@ export default defineComponent({
     const patternSource = computed(() => {
       return [
         {
-          text: "base.number",
+          text: tFn("base.number"),
           value: "/^[0-9]*$/",
         },
         {
-          text: "base.letter",
+          text: tFn("base.letter"),
           value: "/^[A-Za-z]+$/",
         },
         {
-          text: "base.letter.number",
+          text: tFn("base.letter.number"),
           value: "^[A-Za-z0-9]+$",
         },
         {
-          text: "base.letter.number.underliner",
+          text: tFn("base.letter.number.underliner"),
           value: "/^\\w+$/",
         },
         {
-          text: "base.chinese.characters",
+          text: tFn("base.chinese.characters"),
           value: "/^[\u4e00-\u9fa5],{0,}$/",
         },
         {
-          text: "base.mail",
+          text: tFn("base.mail"),
           value:
             "/^([a-zA-Z0-9]+[_|\\_|\\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\\_|\\.]?)*[a-zA-Z0-9]+\\.[a-zA-Z]{2,3}$/",
         },
@@ -1557,11 +1461,6 @@ export default defineComponent({
         : activeDatamin;
     }
 
-    function openIconsModal(model, modelConfig) {
-      iconsVisible.value = true;
-      currentIconModelSlot.value = modelConfig;
-      currentIconModel.value = model;
-    }
 
     function tagChange(tagIcon) {
       let target = inputComponents.find(
@@ -1594,15 +1493,6 @@ export default defineComponent({
         activeData[currentIconModel] = icon;
       }
     }
-
-    function filterOption(input, option) {
-      return (
-        option.componentOptions.children[0].text
-          .toUpperCase()
-          .indexOf(input.toUpperCase()) >= 0
-      );
-    }
-
     // 自动完成数据源
     function handleAutoDataSourceClose(removedTag) {
       const dataSource = activeData["dataSource"].filter(
@@ -1661,6 +1551,15 @@ export default defineComponent({
       { deep: true }
     );
 
+
+    watch(
+      activeData,
+      (val) => {
+        store.commit(ACTIVE_DATA, val);
+      },
+      { deep: true }
+    );
+
     return {
       allIcon,
       currentTab,
@@ -1682,7 +1581,6 @@ export default defineComponent({
       formConf,
       idGlobal,
       currentNode,
-      iconsVisible,
       addReg,
       addSelectItem,
       addDataSourceItem,
@@ -1702,12 +1600,10 @@ export default defineComponent({
       spanChange,
       multipleChange,
       rangeChange,
-      openIconsModal,
       tagChange,
       changeRenderKey,
       characterChange,
       handleIconChange,
-      filterOption,
       handleAutoDataSourceClose,
       showAutoDataSourceInput,
       handleInputAutoDataSourceChange,

@@ -1,6 +1,6 @@
 import storage from 'store'
 import { formConf } from '@/components/generator/config'
-
+import drawingDefalut from "@/components/generator/drawingDefalut";
 import {
   DRAWING_ITEMS,
   DRAWING_ITEMS_VERSION,
@@ -8,7 +8,8 @@ import {
   DRAWING_ID,
   TREE_NODE_ID,
   FORM_CONF,
-  LANG
+  LANG,
+  ACTIVE_DATA
 } from '@/store/mutation-types'
 import { loadLanguageAsync } from '@/locales'
 
@@ -20,7 +21,8 @@ const app = {
     treeNodeId: 100,
     formConf,
     lang: 'zh-CN',
-    _antLocale: {}
+    _antLocale: {},
+    activeData:drawingDefalut[0]
   },
   mutations: {
     [DRAWING_ITEMS]: (state, drawingItems) => {
@@ -42,6 +44,10 @@ const app = {
     [FORM_CONF]: (state, formConfValue) => {
       state.formConf = formConfValue
       storage.set(FORM_CONF, formConfValue)
+    },
+    [ACTIVE_DATA]: (state, activeDataValue) => {
+      state.activeData = activeDataValue
+      storage.set(ACTIVE_DATA, activeDataValue)
     },
     [LANG]: (state, lang, antd = {}) => {
       state.lang = lang

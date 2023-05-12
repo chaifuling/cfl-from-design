@@ -5,3 +5,5 @@ export const DRAWING_ID = 'idGlobal'
 export const TREE_NODE_ID = 'treeNodeId'
 export const FORM_CONF = 'formConf'
 export const LANG = 'lang'
+export const ACTIVE_DATA = 'activeData'
+
