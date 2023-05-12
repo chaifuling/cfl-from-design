@@ -713,13 +713,13 @@
                 :title="activeData.__config__.url"
                 :placeholder="tFn('base.enter')"
                 allow-clear
-                @blur="$emit('fetch-data', activeData)"
+                @blur="emit('fetch-data', activeData)"
               >
                 <a-select
                   slot="prepend"
                   v-model:value="activeData.__config__.method"
                   :style="{ width: '85px' }"
-                  @change="$emit('fetch-data', activeData)"
+                  @change="emit('fetch-data', activeData)"
                 >
                   <a-select-option value="get"> get </a-select-option>
                   <a-select-option value="post"> post </a-select-option>
@@ -732,7 +732,7 @@
               <a-input
                 v-model:value="activeData.__config__.dataPath"
                 :placeholder="tFn('base.enter')"
-                @blur="$emit('fetch-data', activeData)"
+                @blur="emit('fetch-data', activeData)"
               />
             </a-form-item>
 
@@ -1236,8 +1236,9 @@ export default defineComponent({
     showField: String,
     activeData: Object,
     formConf: Object,
+    currentIndex:Number
   },
-  emits: ["tag-change"],
+  emits: ["tag-change",'from-change'],
   setup(props, { emit }) {
     const store = useStore();
     const currentTab = ref("field");
@@ -1546,7 +1547,9 @@ export default defineComponent({
     watch(
       props.activeData,
       (val) => {
+        
         setObject(val, activeData);
+        debugger
       },
       { deep: true }
     );
@@ -1555,7 +1558,7 @@ export default defineComponent({
     watch(
       activeData,
       (val) => {
-        store.commit(ACTIVE_DATA, val);
+        emit('from-change',val)
       },
       { deep: true }
     );
@@ -1608,6 +1611,7 @@ export default defineComponent({
       showAutoDataSourceInput,
       handleInputAutoDataSourceChange,
       handleInputAutoDataSourceConfirm,
+      emit
     };
   },
 });

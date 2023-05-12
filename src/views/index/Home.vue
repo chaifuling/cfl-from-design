@@ -161,9 +161,11 @@
       <right-panel
         :active-data="activeData"
         :form-conf="formConf"
+        :currentIndex="currentIndex"
         :show-field="!!drawingList.length"
         @tag-change="tagChange"
         @fetch-data="fetchData"
+        @from-change="tableChange"
       />
     </a-layout-sider>
     <form-drawer
@@ -276,7 +278,7 @@ import drawingDefalut from "@/components/generator/drawingDefalut";
 import logo from "@/assets/logo.png";
 import CodeTypeModal from "./CodeTypeModal";
 import DraggableItem from "./DraggableItem";
-import { DRAWING_ITEMS, DRAWING_ID,ACTIVE_DATA } from "@/store/mutation-types";
+import { DRAWING_ITEMS, DRAWING_ID } from "@/store/mutation-types";
 import loadBeautifier from "@/utils/loadBeautifier";
 import SelectLang from "@/components/SelectLang";
 import { tFn } from "@/hook/useI18n";
@@ -376,7 +378,8 @@ export default defineComponent({
     let jsonDrawer = ref(null); // 定义一个jsonDrawer变量，并将其初始化为null（使用Vue响应式引用）
     let codeTypeModal = ref(null); // 定义一个codeTypeModal变量，并将其初始化为null（使用Vue响应式引用）
     let formData = reactive({}); // 定义一个formData对象（使用Vue响应式对象）
-    let activeData = reactive(store.state.app.activeData);
+    let activeData = reactive({});
+    const currentIndex = ref(0);
     let oldActiveId = ref(null); // 定义一个oldActiveId变量，并将其初始化为null（使用Vue响应式引用）
     let drawingItems = ref(null); // 定义一个drawingItems变量，并将其初始化为null（使用Vue响应式引用）
     let idGlobal = ref(100); // 定义一个idGlobal变量，并将其初始化为100（使用Vue响应式引用）
@@ -400,8 +403,10 @@ export default defineComponent({
     ];
 
     // 定义一个activeFormItem函数，用于激活当前表单项
-    function activeFormItem(currentItem) {
-      store.commit(ACTIVE_DATA, store.state.app.activeData);
+    function activeFormItem(currentItem, index) {
+      debugger;
+      setObject(currentItem, activeData);
+      currentIndex.value = index;
       activeId.value = currentItem.__config__.formId;
     }
 
@@ -450,7 +455,19 @@ export default defineComponent({
         drawingList.splice(index, 1, item);
       });
     }
-    activeFormItem(drawingList[0]);
+    function tableChange(val) {
+      const cloneActiveData = deepClone(val);
+      delete cloneActiveData.__config__;
+      delete cloneActiveData.__slot__;
+      delete cloneActiveData.__methods__;
+      delete cloneActiveData.__vModel__;
+      drawingList[currentIndex.value] ={
+        ...activeData,
+        ...cloneActiveData
+      }
+      console.log(drawingList);
+    }
+    activeFormItem(drawingList[0], 0);
 
     watch(
       () => activeData.__config__.label,
@@ -477,25 +494,15 @@ export default defineComponent({
     );
     // 监听activeId的变化
     watch(
-      "drawingList",
+      drawingList,
       (val) => {
-        debounce(340, $store.commit(DRAWING_ITEMS, val));
+        debounce(340, store.commit(DRAWING_ITEMS, val));
         if (val.length === 0) {
-          debounce(340, $store.commit(DRAWING_ID, 100));
+          debounce(340, store.commit(DRAWING_ID, 100));
         }
       },
       { deep: true }
     );
-
-    watch(
-      activeData,
-      (val) => {
-        setObject(store.state.app.activeData, activeData);
-        store.commit(ACTIVE_DATA, activeData);
-      },
-      { deep: true }
-    );
-
 
     watch(
       () => props.formConfig,
@@ -514,7 +521,7 @@ export default defineComponent({
     );
 
     function formChange(index, list) {
-      drawingList[index] = list;
+      drawingList.splice(index, 1, val);
       emit("change", drawingList);
     }
 
@@ -606,8 +613,8 @@ export default defineComponent({
     function addComponent(item) {
       const clone = cloneComponent(item);
       fetchData(clone);
+      activeFormItem(clone, drawingList.length);
       drawingList.push(clone);
-      activeFormItem(clone);
     }
 
     // 克隆表单项的函数
@@ -872,6 +879,7 @@ export default defineComponent({
       handelConfirm,
       handleColse,
       formChange,
+      tableChange,
     };
   },
 });

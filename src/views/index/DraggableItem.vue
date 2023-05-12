@@ -4,8 +4,6 @@ import render from "@/components/render/render";
 import { CopyOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { createVNode, reactive, defineComponent, watch, ref } from "vue";
 import { tFn } from "@/hook/useI18n";
-import { useStore } from "vuex";
-import { ACTIVE_DATA } from "@/store/mutation-types";
 
 const components = {
   itemBtns(
@@ -20,6 +18,7 @@ const components = {
     activeId
   ) {
     const { onCopyItem, onDeleteItem } = attrs;
+    
     return [
       <span
         style={{ display: showIcon ? "block" : "none" }}
@@ -58,16 +57,14 @@ const layouts = {
     formConf,
     activeId
   ) {
-    debugger
     const { onActiveItem, onFromChange } = attrs;
-    const store = useStore();
-    store.commit(ACTIVE_DATA, currentItem);
-    const activeData =store.state.app.activeData;
-    const config = reactive(activeData.__config__);
+
+    // currentItem = reactive(currentItem);
+    const config = reactive(currentItem.__config__);
     const child = renderChildren.apply(this, arguments);
     // 穿梭框特殊处理
     if (config.tag === "a-transfer") {
-      activeData.render = (item) => {
+      currentItem.render = (item) => {
         return createVNode(
           "div",
           { key: item.title, value: item.key },
@@ -86,7 +83,7 @@ const layouts = {
         class={className}
         onClick={(event) => {
           if (onActiveItem) {
-            onActiveItem(activeData);
+            onActiveItem(currentItem,index);
           }
           event.stopPropagation();
         }}
@@ -98,7 +95,7 @@ const layouts = {
           <render
             disabled={disabled}
             key={config.renderKey}
-            conf={activeData}
+            conf={currentItem}
             onInput={(event) => {
               let value = event;
               if (
@@ -111,14 +108,12 @@ const layouts = {
                 value = event.target.value;
               }
               config.defaultValue = value;
-              activeData.__config__ = config;
-          
+              currentItem.__config__ = config;
+              onFromChange(index, currentItem);
               // 穿梭框特殊处理
               if (config.tag === "a-transfer") {
-                activeData["target-keys"] = value;
+                currentItem["target-keys"] = value;
               }
-              store.commit(ACTIVE_DATA, props.currentItem);
-              onFromChange(index, activeData);
             }}
           >
             {child}
@@ -241,7 +236,7 @@ export default defineComponent({
     watch(
       props,
       (newVal) => {
-        debugger
+        
         index.value = newVal.index;
         showIcon.value = newVal.showIcon;
         activeId.value = newVal.activeId;

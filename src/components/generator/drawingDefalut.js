@@ -31,7 +31,7 @@ export default [
     maxLength: null,
     disabled: false,
     size: 'default',
-    prefix: ref(''),
+    prefix:'',
     suffix: '',
   },
 ]
