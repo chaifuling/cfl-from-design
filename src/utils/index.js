@@ -23,9 +23,26 @@ export function indent(str, num, len = 2) {
   return result.join('\n')
 }
 
-export function setObject(target,obj){
-  Object.keys(target).forEach((key)=>{
-    obj[key]= target[key];
+export async function setObject(target, obj) {
+  const arr = await getkeysArray(target, obj);
+  arr.forEach((key) => {
+    obj[key] = target[key]
+  })
+
+}
+
+function getkeysArray(target, obj) {
+  const arr = [];
+  return new Promise((res) => {
+    Object.keys(target).forEach((key) => {
+      arr.push(key)
+    })
+    Object.keys(obj).forEach(async (key) => {
+      if (!arr.includes(key)) {
+        delete obj[key];
+      };
+    })
+    res(arr)
   })
 }
 
