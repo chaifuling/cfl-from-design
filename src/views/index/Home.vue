@@ -404,6 +404,7 @@ export default defineComponent({
 
     // 定义一个activeFormItem函数，用于激活当前表单项
     function activeFormItem(currentItem, index) {
+      debugger
       setObject(currentItem, activeData);
       currentIndex.value = index;
       activeId.value = currentItem.__config__.formId;

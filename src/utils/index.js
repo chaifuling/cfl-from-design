@@ -24,11 +24,13 @@ export function indent(str, num, len = 2) {
 }
 
 export async function setObject(target, obj) {
+  if(target.__config__.tag == obj.__config__.tag){
+    return;
+  }
   const arr = await getkeysArray(target, obj);
   arr.forEach((key) => {
     obj[key] = target[key]
   })
-
 }
 
 function getkeysArray(target, obj) {
@@ -42,7 +44,7 @@ function getkeysArray(target, obj) {
         delete obj[key];
       };
     })
-    res(arr)
+    res(arr);
   })
 }
 
