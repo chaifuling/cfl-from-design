@@ -1547,9 +1547,7 @@ export default defineComponent({
     watch(
       props.activeData,
       (val) => {
-        
         setObject(val, activeData);
-        debugger
       },
       { deep: true }
     );
