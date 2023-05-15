@@ -19,7 +19,7 @@ keys.forEach(key => {
 
 function vModel(dataObject, defaultValue, tag) {
   if(tag === "a-switch"){
-    dataObject.checkedValue = !defaultValue;
+    dataObject.checkedValue = defaultValue;
     return
   }
   dataObject.value = defaultValue;
@@ -109,7 +109,7 @@ export default {
     // 将json表单配置转化为vue render可以识别的 “数据对象（dataObject）”
     buildDataObject.call(this, confClone, dataObject);
     const tagName =  resolveComponent(this.conf.__config__.tag);
-    debugger
+    
     // console.log(`${JSON.stringify(tagName)} ----------- ${JSON.stringify(dataObject)}`)
     // 针对上传组件
     if(this.conf.__config__.tag == 'a-upload'){

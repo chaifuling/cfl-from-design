@@ -83,6 +83,7 @@ const layouts = {
         class={className}
         onClick={(event) => {
           if (onActiveItem) {
+            
             onActiveItem(currentItem,index);
           }
           event.stopPropagation();
@@ -96,6 +97,21 @@ const layouts = {
             disabled={disabled}
             key={config.renderKey}
             conf={currentItem}
+            onChange ={(event)=>{
+              let value = event;
+              if (
+                config.tag === "a-input" ||
+                config.tag === "a-textarea" ||
+                config.tag === "a-input-password" ||
+                config.tag === "a-input-search" ||
+                config.tag === "a-radio-group"
+              ) {
+                value = event.target.value;
+              }
+              config.defaultValue = value || '';
+              currentItem.__config__ = config;
+              onFromChange(index, currentItem);
+            }}
             onInput={(event) => {
               let value = event;
               if (

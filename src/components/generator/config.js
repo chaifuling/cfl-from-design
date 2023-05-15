@@ -166,7 +166,7 @@ export const inputComponents = [
     },
     style: { width: '100%' },
     size: 'default',
-    'data-source': ['aaa', 'bbb'],
+    'dataSource': ['aaa', 'bbb'],
     'filter-option': true,
     backfill: false,
     'default-open': false,
@@ -342,7 +342,7 @@ export const selectComponents = [
       changeTag: true,
     },
     oneWay:true,
-    dataSource: [{
+    'dataSource': [{
       key: 'afc163',
       title: 'afc163'
     }, {

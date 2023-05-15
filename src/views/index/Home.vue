@@ -404,9 +404,9 @@ export default defineComponent({
 
     // 定义一个activeFormItem函数，用于激活当前表单项
     function activeFormItem(currentItem, index) {
-      setObject(currentItem, activeData);
       currentIndex.value = index;
       activeId.value = currentItem.__config__.formId;
+      setObject(currentItem, activeData);
     }
 
     // 定义一个generateCode函数，用于生成代码
@@ -466,8 +466,7 @@ export default defineComponent({
       }
       console.log(drawingList);
     }
-    activeFormItem(drawingList[0], 0);
-
+  
     watch(
       () => activeData.__config__.label,
       (val, oldVal) => {
@@ -519,7 +518,7 @@ export default defineComponent({
       { deep: true }
     );
 
-    function formChange(index, list) {
+    function formChange(index, val) {
       drawingList.splice(index, 1, val);
       emit("change", drawingList);
     }
@@ -543,6 +542,7 @@ export default defineComponent({
       loadBeautifier((btf) => {
         beautifier = btf;
       });
+      activeFormItem(drawingList[0], 0);
     });
 
     // 递归设置对象属性值的函数

@@ -101,7 +101,7 @@ function buildAttributes(scheme, dataList, ruleList, optionsList, treeDataList,
   }
 
   // 处理dataSource
-  if (scheme['data-source'] && (config.tag === 'a-auto-complete' || config.tag === 'a-transfer')) {
+  if (scheme['dataSource'] && (config.tag === 'a-auto-complete' || config.tag === 'a-transfer')) {
     buildDataSource(scheme, dataSourceList)
   }
 
@@ -237,7 +237,7 @@ function buildTreeData(scheme, treeDataList) {
 function buildDataSource(scheme, dataSourceList) {
   if (scheme.__vModel__ === undefined) return
   // a-cascader直接有options属性，其他组件都是定义在slot中，所以有两处判断
-  const dataSource = scheme['data-source']
+  const dataSource = scheme['dataSource']
   const str = `${scheme.__vModel__}DataSource: ${JSON.stringify(dataSource)},`
   dataSourceList.push(str)
 }

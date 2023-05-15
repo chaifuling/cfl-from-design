@@ -230,7 +230,7 @@ const tags = {
     const {
       tag, disabled, vModel, allowClear, placeholder
     } = attrBuilder(el)
-    const dataSource = el['data-source'] ? `:data-source="${el.__vModel__}DataSource"` : ''
+    const dataSource = el['dataSource'] ? `:data-source="${el.__vModel__}DataSource"` : ''
     const filterOption = el['filter-option'] ? 'filter-option' : ''
     const backfill = el.backfill ? 'backfill' : ''
     const defaultOpen = el['default-open'] ? 'default-open' : ''
@@ -256,7 +256,7 @@ const tags = {
       tag, disabled
     } = attrBuilder(el)
     const showSearch = el.showSearch ? 'show-search' : ''
-    const dataSource = el['data-source'] ? `:data-source="${el.__vModel__}DataSource"` : ''
+    const dataSource = el['dataSource'] ? `:data-source="${el.__vModel__}DataSource"` : ''
     const render = ':render="item => item.title"'
     const targetKeys = `:target-keys="${confGlobal.formModel}.${el.__vModel__}"`
     const titles = el.titles ? `:titles="['${el.titles[0]}', '${el.titles[1]}']"` : ''

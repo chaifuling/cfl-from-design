@@ -1420,6 +1420,9 @@ export default defineComponent({
 
     function onDefaultValueInput(event) {
       const str = event.target.value;
+      if(!event.target.value){
+        activeData.__config__.defaultValue = undefined;
+      }
       if (isArray(activeData.__config__.defaultValue)) {
         // 数组
         activeData.__config__.defaultValue = str
@@ -1515,15 +1518,14 @@ export default defineComponent({
     }
 
     function handleInputAutoDataSourceConfirm() {
-      const { inputAutoDataSourceValue } = this;
-      let dataSource = activeData["dataSource"];
+      let dataSource = activeData.dataSource;
       if (
         inputAutoDataSourceValue &&
         dataSource.indexOf(inputAutoDataSourceValue) === -1
       ) {
-        dataSource = [...dataSource, inputAutoDataSourceValue];
+        dataSource = [...dataSource, inputAutoDataSourceValue.value];
       }
-      activeData["dataSource"] = dataSource;
+      activeData.dataSource = dataSource;
       inputAutoDataSourceVisible.value = false;
       inputAutoDataSourceValue.value = "";
     }
