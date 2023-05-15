@@ -383,7 +383,10 @@
           v-if="activeData['list-type'] !== undefined"
           :label="tFn('base.list.type')"
         >
-          <a-radio-group v-model:value="activeData['list-type']" button-style="solid">
+          <a-radio-group
+            v-model:value="activeData['list-type']"
+            button-style="solid"
+          >
             <a-radio-button value="text"> text </a-radio-button>
             <a-radio-button value="picture"> picture </a-radio-button>
             <a-radio-button value="picture-card"> picture-card </a-radio-button>
@@ -555,7 +558,10 @@
           v-if="activeData.placement !== undefined"
           :label="tFn('base.placement')"
         >
-          <a-radio-group v-model:value="activeData.placement" button-style="solid">
+          <a-radio-group
+            v-model:value="activeData.placement"
+            button-style="solid"
+          >
             <a-radio-button value="top"> top </a-radio-button>
             <a-radio-button value="bottom"> bottom </a-radio-button>
           </a-radio-group>
@@ -598,38 +604,36 @@
             group="selectItem"
             handle=".option-drag"
           >
-            <div
-              v-for="(item, index) in activeData.options"
-              :key="index"
-              class="select-item"
-            >
-              <div class="select-line-icon option-drag">
-                <a-icon type="pic-left" />
+            <template #item="{ element, index }">
+              <div v-bind="$attrs" :key="index" class="select-item">
+                <div class="select-line-icon option-drag">
+                  <pic-left-outlined />
+                </div>
+                <a-input
+                  v-model:value="element.label"
+                  :placeholder="tFn('base.option.name')"
+                />
+                <a-input
+                  :placeholder="tFn('base.option.value')"
+                  :value="element.value"
+                  @input="setOptionValue(element, $event)"
+                />
+                <div
+                  class="close-btn select-line-icon"
+                  @click="activeData.options.splice(index, 1)"
+                >
+                <minus-circle-outlined />
+                </div>
               </div>
-              <a-input
-                v-model:value="item.label"
-                :placeholder="tFn('base.option.name')"
-              />
-              <a-input
-                :placeholder="tFn('base.option.value')"
-                :value="item.value"
-                @input="setOptionValue(item, $event)"
-              />
-              <div
-                class="close-btn select-line-icon"
-                @click="activeData.options.splice(index, 1)"
-              >
-                <a-icon type="minus-circle" />
-              </div>
-            </div>
+            </template>
           </draggable>
           <div style="margin-left: 20px">
             <a-button
               style="padding-bottom: 0"
-              icon="plus-circle"
               type="link"
               @click="addSelectItem"
             >
+              <plus-circle-outlined />
               {{ tFn("base.add.option") }}
             </a-button>
           </div>
@@ -672,10 +676,10 @@
           <div style="margin-left: 20px">
             <a-button
               style="padding-bottom: 0"
-              icon="plus-circle"
               type="link"
               @click="addDataSourceItem"
             >
+              <plus-circle-outlined />
               {{ tFn("base.add.data") }}
             </a-button>
           </div>
@@ -801,7 +805,6 @@
           >
             <a-button
               style="padding-bottom: 0"
-              icon="plus-circle"
               type="link"
               @click="
                 addTreeItem(
@@ -811,6 +814,7 @@
                 )
               "
             >
+              <plus-circle-outlined />
               {{ tFn("base.add.parent") }}
             </a-button>
           </div>
@@ -850,7 +854,10 @@
           v-if="activeData.__config__.tag === 'a-rate'"
           :label="tFn('base.character')"
         >
-          <a-input v-model:value="activeData.character" @change="characterChange" />
+          <a-input
+            v-model:value="activeData.character"
+            @change="characterChange"
+          />
         </a-form-item>
         <a-form-item
           v-if="activeData.reverse !== undefined"
@@ -871,7 +878,10 @@
           "
           :label="tFn('base.button.style')"
         >
-          <a-radio-group v-model:value="activeData.buttonStyle" button-style="solid">
+          <a-radio-group
+            v-model:value="activeData.buttonStyle"
+            button-style="solid"
+          >
             <a-radio-button value="outline">
               {{ tFn("base.button.style.outline") }}
             </a-radio-button>
@@ -976,7 +986,9 @@
           v-if="activeData.__config__.tag === 'a-tree-select'"
           :label="tFn('base.dropdown.matc.select.width')"
         >
-          <a-switch v-model:checked="activeData['dropdown-matc-select-width']" />
+          <a-switch
+            v-model:checked="activeData['dropdown-matc-select-width']"
+          />
         </a-form-item>
         <a-form-item
           v-if="activeData.__config__.tag === 'a-tree-select'"
@@ -1079,14 +1091,15 @@
               />
             </a-form-item>
           </div>
-          <a-button icon="plus-circle" type="link" @click="addReg">
+          <a-button type="link" @click="addReg">
+            <plus-circle-outlined />
             {{ tFn("base.add.reg") }}
           </a-button>
         </template>
       </a-form>
       <!-- 表单属性 -->
       <a-form
-      :label-col="{ span: 6 }"
+        :label-col="{ span: 6 }"
         :wrapper-col="{ span: 16 }"
         v-show="currentTab === 'form'"
         size="small"
@@ -1154,7 +1167,10 @@
           <a-input v-model:value="formConf.wrapperCol.offset" />
         </a-form-item>
         <a-form-item :label="tFn('base.label.align')">
-          <a-radio-group v-model:value="formConf.labelAlign" button-style="solid">
+          <a-radio-group
+            v-model:value="formConf.labelAlign"
+            button-style="solid"
+          >
             <a-radio-button value="left">
               {{ tFn("base.label.align.left") }}
             </a-radio-button>
@@ -1211,7 +1227,8 @@ import {
   inputComponents,
   selectComponents,
 } from "@/components/generator/config";
-import { FORM_CONF,ACTIVE_DATA } from "@/store/mutation-types";
+import draggable from "vuedraggable";
+import { FORM_CONF, ACTIVE_DATA } from "@/store/mutation-types";
 import { LinkOutlined } from "@ant-design/icons-vue";
 import {
   defineComponent,
@@ -1221,6 +1238,8 @@ import {
   reactive,
   onMounted,
 } from "vue";
+
+import { PlusCircleOutlined,MinusCircleOutlined,PicLeftOutlined } from "@ant-design/icons-vue";
 import { tFn } from "@/hook/useI18n";
 import { useStore } from "vuex";
 
@@ -1231,14 +1250,18 @@ export default defineComponent({
   components: {
     TreeNodeModal,
     LinkOutlined,
+    draggable,
+    PlusCircleOutlined,
+    PicLeftOutlined,
+    MinusCircleOutlined 
   },
   props: {
     showField: String,
     activeData: Object,
     formConf: Object,
-    currentIndex:Number
+    currentIndex: Number,
   },
-  emits: ["tag-change",'from-change'],
+  emits: ["tag-change", "from-change"],
   setup(props, { emit }) {
     const store = useStore();
     const currentTab = ref("field");
@@ -1277,7 +1300,6 @@ export default defineComponent({
     const currentIconModel = ref(null);
     const inputAutoDataSourceVisible = ref(false);
     const inputAutoDataSourceValue = ref("");
-
     // 定义 computed
     const documentLink = computed(() => {
       return activeData.__config__.document || "tag.document";
@@ -1348,7 +1370,7 @@ export default defineComponent({
     }
 
     function addSelectItem() {
-      activeDataoptions.push({
+      activeData.options.push({
         label: "",
         value: "",
       });
@@ -1371,7 +1393,7 @@ export default defineComponent({
       activeData.__config__.defaultValue = []; // 避免删除时报错
       const { pos } = node;
       const dataPos = pos.split("-");
-      treeRemove(activeDataoptions, 1, dataPos);
+      treeRemove(activeData.options, 1, dataPos);
     }
 
     function treeRemove(node, index, dataPos) {
@@ -1420,7 +1442,7 @@ export default defineComponent({
 
     function onDefaultValueInput(event) {
       const str = event.target.value;
-      if(!event.target.value){
+      if (!event.target.value) {
         activeData.__config__.defaultValue = undefined;
       }
       if (isArray(activeData.__config__.defaultValue)) {
@@ -1464,7 +1486,6 @@ export default defineComponent({
         ? [activeDatamin, activeDatamax]
         : activeDatamin;
     }
-
 
     function tagChange(tagIcon) {
       let target = inputComponents.find(
@@ -1554,11 +1575,10 @@ export default defineComponent({
       { deep: true }
     );
 
-
     watch(
       activeData,
       (val) => {
-        emit('from-change',val)
+        emit("from-change", val);
       },
       { deep: true }
     );
@@ -1611,7 +1631,7 @@ export default defineComponent({
       showAutoDataSourceInput,
       handleInputAutoDataSourceChange,
       handleInputAutoDataSourceConfirm,
-      emit
+      emit,
     };
   },
 });
