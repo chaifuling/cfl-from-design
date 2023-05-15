@@ -112,25 +112,7 @@ const layouts = {
               currentItem.__config__ = config;
               onFromChange(index, currentItem);
             }}
-            onInput={(event) => {
-              let value = event;
-              if (
-                config.tag === "a-input" ||
-                config.tag === "a-textarea" ||
-                config.tag === "a-input-password" ||
-                config.tag === "a-input-search" ||
-                config.tag === "a-radio-group"
-              ) {
-                value = event.target.value;
-              }
-              config.defaultValue = value;
-              currentItem.__config__ = config;
-              onFromChange(index, currentItem);
-              // 穿梭框特殊处理
-              if (config.tag === "a-transfer") {
-                currentItem["target-keys"] = value;
-              }
-            }}
+     
           >
             {child}
           </render>
