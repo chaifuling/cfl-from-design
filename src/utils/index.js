@@ -27,13 +27,7 @@ export async function setObject(targets, obj) {
   const target = deepClone(targets);
   const arr = await getkeysArray(target, obj);
   arr.forEach((key) => {
-    if(key === '__config__'){
-      target.__config__.tag =  obj.__config__.tag;
-      obj.__config__ =  target.__config__;
-    }else{
-      obj[key] = target[key]
-    }
-
+    obj[key] = target[key]
   })
 }
 
