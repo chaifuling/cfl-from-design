@@ -1,7 +1,6 @@
 import ruleTrigger from './ruleTrigger'
 import { titleCase } from '@/utils/index'
-import { useI18n } from '@/hook/useI18n';
-const { t } = useI18n();
+import { tFn } from '@/hook/useI18n';
 
 let confGlobal
 let someSpanIsNot24
@@ -10,8 +9,8 @@ export function modalWrapper(str) {
   return `<div id="modal"><a-modal :visible="visible" get-container="#modal" @cancel="close" title="Form Titile">
     ${str}
     <div slot="footer">
-      <a-button @click="close">${(t('base.close'))}</a-button>
-      <a-button type="primary" @click="handelConfirm">${(t('base.ok'))}</a-button>
+      <a-button @click="close">${(tFn('base.close'))}</a-button>
+      <a-button type="primary" @click="handelConfirm">${(tFn('base.ok'))}</a-button>
     </div>
   </a-modal></div>`
 }
@@ -86,8 +85,8 @@ function buildFromBtns(scheme, type) {
   if (scheme.formBtns && type === 'file') {
     str = `<a-form-item ${wrapperCol}>
           <a-space>
-          <a-button type="primary" @click="submitForm">${(t('base.submit'))}</a-button>
-          <a-button @click="resetForm">${(t('base.reset'))}</a-button>
+          <a-button type="primary" @click="submitForm">${(tFn('base.submit'))}</a-button>
+          <a-button @click="resetForm">${(tFn('base.reset'))}</a-button>
           </a-space>
         </a-form-item>`
     if (someSpanIsNot24) {

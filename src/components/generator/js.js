@@ -1,8 +1,8 @@
 import { isArray } from 'util'
 import { exportDefault, titleCase, deepClone } from '@/utils/index'
 import ruleTrigger from './ruleTrigger'
-import { useI18n } from '@/hook/useI18n';
-const { t } = useI18n();
+import { tFn } from '@/hook/useI18n';
+
 
 const units = {
   KB: '1024',
@@ -196,8 +196,8 @@ function buildRules(scheme, ruleList) {
     if (config.required) {
       const type = isArray(config.defaultValue) ? 'type: \'array\',' : ''
       let message = isArray(config.defaultValue)
-        ? `${t('base.select.least.one')}${config.label}` : scheme.placeholder
-      if (message === undefined) message = `${config.label}${t('base.not.null')}`
+        ? `${tFn('base.select.least.one')}${config.label}` : scheme.placeholder
+      if (message === undefined) message = `${config.label}${tFn('base.not.null')}`
       rules.push(`{ required: true, ${type} message: '${message}', trigger: '${ruleTrigger[config.tag]}' }`)
     }
     if (config.regList && isArray(config.regList)) {
@@ -260,14 +260,14 @@ function buildBeforeUpload(scheme) {
   if (config.fileSize) {
     rightSizeCode = `let isRightSize = file.size / ${unitNum} < ${config.fileSize}
     if(!isRightSize){
-      this.$message.error('${t('base.file.size.overflow')} ${config.fileSize}${config.sizeUnit}')
+      this.$message.error('${tFn('base.file.size.overflow')} ${config.fileSize}${config.sizeUnit}')
     }`
     returnList.push('isRightSize')
   }
   if (scheme.accept) {
     acceptCode = `let isAccept = new RegExp('${scheme.accept}').test(file.type)
     if(!isAccept){
-      this.$message.error('${t('base.file.should.choose.type')}${scheme.accept}')
+      this.$message.error('${tFn('base.file.should.choose.type')}${scheme.accept}')
     }`
     returnList.push('isAccept')
   }

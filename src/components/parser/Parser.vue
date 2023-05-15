@@ -1,8 +1,8 @@
 <script>
 import { deepClone } from '@/utils/index'
 import render from '@/components/render/render'
-import { useI18n } from '@/hook/useI18n';
-const { t } = useI18n();
+import { tFn } from '@/hook/useI18n';
+import { createVNode } from "vue";
 
 const ruleTrigger = {
   'a-input': 'blur',
@@ -91,8 +91,8 @@ function formBtns(h) {
   return <a-col>
     <a-form-item size="large">
       <a-space>
-        <a-button type="primary" onClick={this.submitForm}>{t('base.submit')}</a-button>
-        <a-button onClick={this.resetForm}>{t('base.reset')}</a-button>
+        <a-button type="primary" onClick={this.submitForm}>{tFn('base.submit')}</a-button>
+        <a-button onClick={this.resetForm}>{tFn('base.reset')}</a-button>
       </a-space>
     </a-form-item>
   </a-col>
@@ -106,7 +106,7 @@ function renderFormItem(h, elementList) {
     if (layout) {
       return layout.call(this, h, scheme)
     }
-    throw new Error(`${config.layout}${t('base.layout.format.failed')}`)
+    throw new Error(`${config.layout}${tFn('base.layout.format.failed')}`)
   })
 }
 
@@ -213,7 +213,7 @@ export default {
     }
   },
   render(h) {
-    return renderFrom.call(this, h)
+    return renderFrom.call(this, createVNode)
   }
 }
 </script>

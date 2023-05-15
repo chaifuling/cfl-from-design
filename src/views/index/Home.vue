@@ -378,7 +378,7 @@ export default defineComponent({
     let jsonDrawer = ref(null); // 定义一个jsonDrawer变量，并将其初始化为null（使用Vue响应式引用）
     let codeTypeModal = ref(null); // 定义一个codeTypeModal变量，并将其初始化为null（使用Vue响应式引用）
     let formData = reactive({}); // 定义一个formData对象（使用Vue响应式对象）
-    let activeData = reactive(deepClone(props.formConfig.drawingList[0]));
+    let activeData = reactive(deepClone(drawingList[0]||drawingDefalut[0]));
     const currentIndex = ref(0);
     let oldActiveId = ref(null); // 定义一个oldActiveId变量，并将其初始化为null（使用Vue响应式引用）
     let drawingItems = ref(null); // 定义一个drawingItems变量，并将其初始化为null（使用Vue响应式引用）
@@ -404,7 +404,6 @@ export default defineComponent({
 
     // 定义一个activeFormItem函数，用于激活当前表单项
     function activeFormItem(currentItem, index) {
-      debugger
       setObject(currentItem, activeData);
       currentIndex.value = index;
       activeId.value = currentItem.__config__.formId;
