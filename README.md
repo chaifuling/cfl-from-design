@@ -6,7 +6,7 @@
 
 ***\*[****文档****](**开发中**) | [****在线演示****](**暂无**)\****
 
-![image-20230516155053178](https://minio-yjy-api.e2yun.com/genmic-chart-card-management/image-20230516155053178.png)
+<img src="https://minio-yjy-api.e2yun.com/genmic-chart-card-management/image-20230516155053178.png" alt="image-20230516155053178" />
 
 ## 引入
 
