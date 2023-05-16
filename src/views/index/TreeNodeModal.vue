@@ -5,17 +5,17 @@
     @ok="handelConfirm"
     @cancel="close"
   >
-    <a-form
-      ref="elForm"
-      :model="formData"
-      :rules="rules"
-    >
+    <a-form ref="elForm" :model="formData" :rules="rules">
       <a-form-item :label="tFn('base.option.name')" prop="label">
-        <a-input v-model="formData.label" :placeholder="tFn('base.enter') + tFn('base.option.name')" allow-clear />
+        <a-input
+          v-model:value="formData.label"
+          :placeholder="tFn('base.enter') + tFn('base.option.name')"
+          allow-clear
+        />
       </a-form-item>
       <a-form-item :label="tFn('base.option.value')" prop="value">
         <a-input
-          v-model="formData.value"
+          v-model:value="formData.value"
           :placeholder="tFn('base.enter') + tFn('base.option.value')"
           allow-clear
         >
@@ -35,94 +35,102 @@
   </a-modal>
 </template>
 <script>
-import { isNumberStr } from '@/utils/index'
-import { TREE_NODE_ID } from '@/store/mutation-types'
-import { baseMixin } from '@/store/app-mixin'
-import {defineComponent} from 'vue'
+import { isNumberStr } from "@/utils/index";
+import { TREE_NODE_ID } from "@/store/mutation-types";
+import { baseMixin } from "@/store/app-mixin";
+import { defineComponent, ref, reactive, computed, watch } from "vue";
+import { useStore } from "vuex";
+import { tFn } from "@/hook/useI18n";
 
 export default defineComponent({
   components: {},
   mixins: [baseMixin],
   inheritAttrs: false,
   props: [],
-  data() {
-    return {
-      visible: false,
-      formData: {
-        label: undefined,
-        value: undefined
-      },
-      dataType: 'string'
-    }
-  },
-  computed: {
-    rules() {
-      return {
-        label: [
-          {
-            required: true,
-            message: this.tFn('base.enter') + this.tFn('base.option.name'),
-            trigger: 'blur'
-          }
-        ],
-        value: [
-          {
-            required: true,
-            message: this.tFn('base.enter') + this.tFn('base.option.value'),
-            trigger: 'blur'
-          }
-        ]
-      }
-    },
-    dataTypeOptions() {
-      return [
+  emits: ["commit"],
+  setup(props, { emit }) {
+    const store = useStore();
+    const visible = ref(false);
+    const dataType = ref("string");
+    let treeNodeId =store.state.app.treeNodeId;
+    const elForm = ref(null);
+    const formData = reactive({
+      label: "",
+      value: "",
+    });
+    const rules = computed(() => ({
+      label: [
         {
-          label: this.tFn('base.string'),
-          value: 'string'
+          required: true,
+          message: tFn("base.enter") + tFn("base.option.name"),
+          trigger: "blur",
         },
+      ],
+      value: [
         {
-          label: this.tFn('base.number'),
-          value: 'number'
-        }
-      ]
+          required: true,
+          message: tFn("base.enter") + tFn("base.option.value"),
+          trigger: "blur",
+        },
+      ],
+    }));
+
+    const dataTypeOptions = computed(() => [
+      {
+        label: tFn("base.string"),
+        value: "string",
+      },
+      {
+        label: tFn("base.number"),
+        value: "number",
+      },
+    ]);
+    watch(formData.value, (val) => {
+      dataType.value = isNumberStr(val) ? "number" : "string";
+    });
+
+    watch(treeNodeId, (val) => {
+      store.commit(TREE_NODE_ID, val);
+    });
+    function open() {
+      formData.label = "";
+      formData.value = "";
+      visible.value = true;
     }
-  },
-  watch: {
-    // eslint-disable-next-line func-names
-    'formData.value': function (val) {
-      this.dataType = isNumberStr(val) ? 'number' : 'string'
-    },
-    treeNodeId(val) {
-      this.$store.commit(TREE_NODE_ID, val)
+
+    function close() {
+      visible.value = false;
     }
-  },
-  created() {},
-  mounted() {},
-  methods: {
-    open() {
-      this.formData = {
-        label: undefined,
-        value: undefined
-      }
-      this.visible = true
-    },
-    close() {
-      this.visible = false
-    },
-    handelConfirm() {
-      this.$refs.elForm.validate(valid => {
-        if (!valid) return
-        if (this.dataType === 'number') {
-          this.formData.value = parseFloat(this.formData.value)
+
+    function handelConfirm() {
+      elForm.value.validate().then(res=>{
+        if (dataType.value === "number") {
+          formData.value = parseFloat(formData.value);
         }
-        this.formData.id = this.treeNodeId++
-        this.$emit('commit', this.formData)
-        this.close()
+        treeNodeId +=1;
+        formData.id = treeNodeId;
+        const  datas= {
+          ...formData
+        }
+        emit("commit", datas);
+        close();
       })
     }
-  }
-})
+
+    return {
+      visible,
+      dataType,
+      treeNodeId,
+      elForm,
+      formData,
+      rules,
+      dataTypeOptions,
+      open,
+      close,
+      handelConfirm,
+    };
+  },
+});
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -739,7 +739,7 @@ export default defineComponent({
       nextTick(() => {
         const len = drawingList.length;
         if (len) {
-          activeFormItem(drawingList[len - 1]);
+          activeFormItem(drawingList[len - 1],);
         }
       });
     }

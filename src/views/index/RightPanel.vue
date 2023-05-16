@@ -622,7 +622,7 @@
                   class="close-btn select-line-icon"
                   @click="activeData.options.splice(index, 1)"
                 >
-                <minus-circle-outlined />
+                  <minus-circle-outlined />
                 </div>
               </div>
             </template>
@@ -648,30 +648,28 @@
             group="selectItem"
             handle=".option-drag"
           >
-            <div
-              v-for="(item, index) in activeData.dataSource"
-              :key="item.key"
-              class="select-item"
-            >
-              <div class="select-line-icon option-drag">
-                <a-icon type="pic-left" />
+            <template #item="{ element, index }">
+              <div v-bind="$attrs" :key="element.key" class="select-item">
+                <div class="select-line-icon option-drag">
+                  <pic-left-outlined />
+                </div>
+                <a-input
+                  v-model:value="element.title"
+                  :placeholder="tFn('base.show.name')"
+                />
+                <a-input
+                  :placeholder="tFn('base.data.value')"
+                  :value="element.key"
+                  @input="setDataSourceKey(element, $event)"
+                />
+                <div
+                  class="close-btn select-line-icon"
+                  @click="activeData['dataSource'].splice(index, 1)"
+                >
+                <minus-circle-outlined />
+                </div>
               </div>
-              <a-input
-                v-model:value="item.title"
-                :placeholder="tFn('base.show.name')"
-              />
-              <a-input
-                :placeholder="tFn('base.data.value')"
-                :value="item.key"
-                @input="setDataSourceKey(item, $event)"
-              />
-              <div
-                class="close-btn select-line-icon"
-                @click="activeData['dataSource'].splice(index, 1)"
-              >
-                <a-icon type="minus-circle" />
-              </div>
-            </div>
+            </template>
           </draggable>
           <div style="margin-left: 20px">
             <a-button
@@ -763,8 +761,8 @@
           </template>
 
           <!-- 级联选择静态树 -->
-          <!-- {{activeDataoptions}} -->
           <a-tree
+            v-if="showTree"
             draggable
             :tree-data="
               activeData.__config__.tag === 'a-cascader'
@@ -782,16 +780,12 @@
                 <span>{{ data.label }}</span>
                 <template #overlay>
                   <a-menu>
-                    <a-menu-item key="1" @click="append(data.dataRef)">
-                      <a-icon type="plus" style="color: #1890ff" />
+                    <a-menu-item key="1" @click="append(data.dataRef,data)">
+                      <plus-circle-outlined />
                       {{ tFn("base.add") }}
                     </a-menu-item>
                     <a-menu-item key="2" @click="remove(data)">
-                      <a-icon
-                        type="delete"
-                        theme="twoTone"
-                        two-tone-color="#eb2f96"
-                      />
+                      <minus-circle-outlined />
                       {{ tFn("base.remove") }}
                     </a-menu-item>
                   </a-menu>
@@ -1228,7 +1222,7 @@ import {
   selectComponents,
 } from "@/components/generator/config";
 import draggable from "vuedraggable";
-import { FORM_CONF, ACTIVE_DATA } from "@/store/mutation-types";
+import { FORM_CONF, ACTIVE_DATA,TREE_NODE_ID } from "@/store/mutation-types";
 import { LinkOutlined } from "@ant-design/icons-vue";
 import {
   defineComponent,
@@ -1239,7 +1233,11 @@ import {
   onMounted,
 } from "vue";
 
-import { PlusCircleOutlined,MinusCircleOutlined,PicLeftOutlined } from "@ant-design/icons-vue";
+import {
+  PlusCircleOutlined,
+  MinusCircleOutlined,
+  PicLeftOutlined,
+} from "@ant-design/icons-vue";
 import { tFn } from "@/hook/useI18n";
 import { useStore } from "vuex";
 
@@ -1253,7 +1251,7 @@ export default defineComponent({
     draggable,
     PlusCircleOutlined,
     PicLeftOutlined,
-    MinusCircleOutlined 
+    MinusCircleOutlined,
   },
   props: {
     showField: String,
@@ -1267,7 +1265,7 @@ export default defineComponent({
     const currentTab = ref("field");
     const formConf = ref({ ...props.formConf });
     const showField = ref(props.showField);
-    const treeNodeModal = ref();
+    const treeNodeModal = ref(null);
     const justifyOptions = ref([
       {
         label: "start",
@@ -1293,8 +1291,9 @@ export default defineComponent({
     const activeData = reactive({
       ...props.activeData,
     });
-    const idGlobal = ref(0);
+    let idGlobal = store.state.app.treeNodeId;
     const currentNode = ref([]);
+    const showTree = ref(true)
     const iconsVisible = ref(false);
     const currentIconModelSlot = ref(null);
     const currentIconModel = ref(null);
@@ -1384,9 +1383,11 @@ export default defineComponent({
     }
 
     function addTreeItem(keyName) {
-      ++idGlobal.value;
+      // idGlobal +=1;
+      // store.commit(TREE_NODE_ID, idGlobal);
       treeNodeModal.value.open();
       currentNode.value = activeData[keyName];
+
     }
 
     function remove(node) {
@@ -1406,9 +1407,10 @@ export default defineComponent({
     }
 
     function addNode(data) {
+      showTree.value = false;
       currentNode.value.push(data);
+      showTree.value = true
     }
-
     function setOptionValue(item, event) {
       const val = event.target.value;
       item.value = isNumberStr(val) ? +val : val;
@@ -1550,12 +1552,13 @@ export default defineComponent({
       inputAutoDataSourceVisible.value = false;
       inputAutoDataSourceValue.value = "";
     }
-    function append(data) {
+    function append(data,info) {
       if (!data.children) {
         data.children = [];
       }
       treeNodeModal.value.open();
       currentNode.value = data.children;
+
     }
 
     // 监听表单配置数据变化
@@ -1582,11 +1585,19 @@ export default defineComponent({
       },
       { deep: true }
     );
+    watch(
+      activeData.options,
+      (val) => {
+        activeData.options = val;
+
+      },
+      { deep: true }
+    );
+
 
     return {
       allIcon,
       currentTab,
-      currentNode,
       iconsVisible,
       currentIconModelSlot,
       currentIconModel,
@@ -1632,6 +1643,8 @@ export default defineComponent({
       handleInputAutoDataSourceChange,
       handleInputAutoDataSourceConfirm,
       emit,
+      treeNodeModal,
+      showTree
     };
   },
 });
