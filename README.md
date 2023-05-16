@@ -6,7 +6,9 @@
 
 ***\*[****文档****](**开发中**) | [****在线演示****](**暂无**)\****
 
-## ![image-20230516155053178](https://minio-yjy-api.e2yun.com/genmic-chart-card-management/image-20230516155053178.png)引入
+![image-20230516161416494](https://minio-yjy-api.e2yun.com/genmic-chart-card-management/image-20230516155053178.png)
+
+## 引入
 
 **NodeJs:**
 
@@ -80,4 +82,4 @@ export default {
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2023-caifuling
+Copyright (c) 2023-present xaboy
